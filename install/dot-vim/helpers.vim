@@ -1,0 +1,72 @@
+" Helper functions
+function! DeleteInactiveBufs()
+    "From tabpagebuflist() help, get a list of all buffers in all tabs
+    let tablist = []
+    for i in range(tabpagenr('$'))
+        call extend(tablist, tabpagebuflist(i + 1))
+    endfor
+
+    "Below originally inspired by Hara Krishna Dara and Keith Roberts
+    "http://tech.groups.yahoo.com/group/vim/message/56425
+    let nWipeouts = 0
+    for i in range(1, bufnr('$'))
+        if bufexists(i) && !getbufvar(i,"&mod") && index(tablist, i) == -1
+        "bufno exists AND isn't modified AND isn't in the list of buffers open in windows and tabs
+            silent exec 'bwipeout' i
+            let nWipeouts = nWipeouts + 1
+        endif
+    endfor
+    echomsg nWipeouts . ' buffer(s) wiped out'
+endfunction
+command! Bdi :call DeleteInactiveBufs()
+
+
+function! GenerateUMLDiagram()
+    let l:save_pos = getpos(".")
+    " TODO: Verify if plantuml and eog are installed
+    let l:start_line = search('@startuml \(\S\+\)', 'c')
+    echo l:start_line
+    if l:start_line == 0
+        echo "No start pattern found."
+        return
+    endif
+    let l:line = getline(l:start_line)
+
+    echo "Start line: " . l:line
+    let l:match = matchstr(l:line, '@startuml \zs\S\+')
+    echo "The diagram name:" . l:match
+
+    if empty(l:match)
+        echo "No matching filename found."
+        return
+    endif
+
+    let l:end_line = search('@enduml', 'c')
+    if l:end_line == 0
+        echo "No end pattern found."
+        return
+    endif
+
+    execute l:start_line . ',' . l:end_line . 'write! ' . l:match . '.uml'
+
+    let l:diag_format = input("Diagram format (png/svg/eps/pdf/vdx/xmi/scxml/html/txt/utxt/latex/latexNP):", "png")
+    echo "Diagram format: " . l:diag_format 
+
+    let l:cmd = 'plantuml ' . '-t' . l:diag_format . ' ' . l:match . '.uml'
+    let l:cmd2 = 'eog ' . l:match . "." . l:diag_format 
+    let l:cmd3 = 'rm ' . l:match . '.uml'
+
+    silent execute '!' . l:cmd
+    if l:diag_format == "txt"
+      silent execute 'r!cat ' . l:match . ".a" . l:diag_format
+    elseif l:diag_format == "utxt"
+      silent execute '.+1r!cat ' . l:match . "." . l:diag_format
+    else
+      silent execute '!' . l:cmd2 ."&"
+    endif
+    silent execute '!' . l:cmd3 
+    
+    redraw!
+    call setpos('.', l:save_pos)
+endfunction
+

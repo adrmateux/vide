@@ -1,0 +1,47 @@
+#!/bin/bash
+CLANG_COMPLETE_FILE=./.clang_complete
+rm $CLANG_COMPLETE_FILE
+
+# The following options are available for .clang_complete
+# -DDEBUG
+# -DXXXXX
+# -include ../config.h
+
+if [ "$1" == "sah" ]; then
+
+cat <<EOF >> $CLANG_COMPLETE_FILE
+-DDEBUG
+EOF
+
+INCLUDE_DIRS=$(find . -type d \( -path "*/wlan-manager*/*" -o \
+        -path "*/pcb-app*/*" -o \
+        -path "*/pcb-bus*/*" -o \
+        -path "*/pcb-cli*/*" -o \
+        -path "*/pcb-eventmanager*/*" -o \
+        -path "*/pcb-ser-*/*" -o \
+        -path "*/ssw*/*" -o \
+        -path "*/pwhm*/*" -o \
+        -path "*/mod-whm-*/*" -o \
+        -path "*/sahpairing*/*" -o \
+        -path "*/libsahtrace*/*" -o \
+              -path "*/libswl*/*" -o \
+              -path "*/libpcb*/*" -o \
+              -path "*/wlan-manager*/*" -o \
+              -path "*/mod-amxb-pcb*/*" -o \
+              -path "*/libamx*/*" \) -not -path "*/.pkgdir/*" -not -path "*/ipkg-install/*" -not -path "*/ipkg-arm_cortex-a53/*"\
+              -name "include*"  -print)
+else
+cat <<EOF >> $CLANG_COMPLETE_FILE
+-DDEBUG
+-I/usr/include/c++/11/
+-I/usr/include/clang/14/include/
+EOF
+
+INCLUDE_DIRS=$(find . \( -name \*.h -o -name \*.hpp \) -printf '%h\n' | sort -u) 
+fi
+
+printf "INCLUDE_DIRS=$INCLUDE_DIRS\n"
+
+realpath $INCLUDE_DIRS | awk '{print "-I"$1}' >> $CLANG_COMPLETE_FILE 
+
+printf "Created $CLANG_COMPLETE_FILE\n"

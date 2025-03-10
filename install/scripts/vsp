@@ -1,0 +1,16 @@
+#!/bin/bash -e
+
+source ~/.vim/vide-shell-functions.sh
+
+if [ -n "$1" ]; then
+  vso $1
+fi
+
+PROMPT="ex> "
+while read -p "${PROMPT}" COMMAND; do
+        if [ "$COMMAND" = "q" ]; then
+          break
+        fi
+        echo -en "\033[1A\033[2K"
+        _vsex "<ESC>$COMMAND<CR>"
+done  

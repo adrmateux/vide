@@ -1,0 +1,48 @@
+#!/bin/bash
+. ~/.myenvars
+
+open_file(){
+  vim --servername $VI_SERVER --remote-send "<ESC>"
+  vim --servername $VI_SERVER --remote-send ":tabnew $1<CR><CR>"
+  vim --servername $VI_SERVER --remote-send ":$2<CR><CR>"
+}
+
+IFS=":" read FILENAME LINE GARBAGE <<< "$*"
+ABS_FILENAME=$(realpath $FILENAME)
+if [ -f "$ABS_FILENAME" ]; then
+  printf "Opening file $ABS_FILENAME\n"
+  open_file "$ABS_FILENAME" "$LINE"
+else
+  printf "File $ABS_FILENAME not found!\n"
+  printf "Searching for files that match the name $(basename $FILENAME) ...\n"
+
+  COUNT=0
+  declare -a FOUND_FILE=()
+  find $(pwd -P) -name "$(basename $FILENAME)" -exec realpath {} \; > tmpfile
+  while IFS= read -r line;do
+    let COUNT=COUNT+1
+    printf "$COUNT - $line\n"
+    FOUND_FILE+=( $line )
+  done < tmpfile
+  rm tmpfile
+
+  if [ ${#FOUND_FILE[*]} -gt 0 ]; then
+    printf "Found ${#FOUND_FILE[*]} files\n"
+    read -p "Open file (1..${#FOUND_FILE[@]}) or \"e\" to exit (default=1): " FILENUM
+    [ -z $FILENUM ] && FILENUM=1
+    [ "$FILENUM" == "e" ] && exit 0 
+    printf "FILENUM: $FILENUM\n"    
+
+    if [ $FILENUM -le ${#FOUND_FILE[@]} ]; then
+      let FILENUM=FILENUM-1
+      printf "Openning file ${FOUND_FILE[$FILENUM]}\n"
+      open_file ${FOUND_FILE[$FILENUM]} $LINE
+    else
+      printf "Selected nothing.\n"
+      exit 0
+    fi
+    
+  else
+    printf "No files found!!!"
+  fi
+fi

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+source ~/.vim/vide-shell-functions.sh
+_vsex "<ESC>$*<CR>"

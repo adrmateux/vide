@@ -1,0 +1,79 @@
+#!/bin/python
+# Description:
+#   This script produces a compile_commands.json file. It uses as input a filtered output from the result of a ```make V=sc``` from openwrt build.
+#   This filtered output is the result of the following command:
+#   ```grep -e "^ccache_" -e "make.*Entering directory" -e "make.*Leaving directory" build-result.txt | sed -r 's/(.*\.\.\. )(make\[.*)/\2/' > build-result.txt.filtered```
+#
+# Sometimes the higienization of the resulting file is needed, in order to eliminate the "unclosed" "Entering" or "un-opened" "Leaving".# To do this just run the script up to the moment if fails. Verify the last failed line, and check around for the failing `make.*Entering` or `make.*Leaving` failure. 
+
+import re
+import json
+import os
+log = """
+make[1]: Entering directory 'dir_name_a'
+make[2]: Entering directory 'dir_name_b'
+ccache_cc param_x param_y filename.r
+make[2]: Leaving directory 'dir_name_b'
+make[1]: Leaving directory 'dir_name_a'
+"""
+
+# grep -e "^ccache_" -e "make.*Entering directory" -e "make.*Leaving directory" build-result.txt | sed -r 's/(.*\.\.\. )(make\[.*)/\2/' > build-result.txt.filtered
+
+# Regular expressions to match directories and commands
+enter_dir_pattern = re.compile(r"make\[\d+\]: Entering directory '(.*?)'")
+leave_dir_pattern = re.compile(r"make\[\d+\]: Leaving directory '(.*?)'")
+cmd_pattern = re.compile(r"(ccache_[a-z]* .+)")
+file_pattern = re.compile(r"\S+\.c")
+
+directory_stack = []
+commands = []
+
+filtered_build_output="./build-result.txt.filtered"
+# filename="fakelog.txt"
+
+with open(filtered_build_output) as f:
+    content=f.readlines()
+
+    # Process each line
+    for line in content:
+        # print(line)
+        enter_match = enter_dir_pattern.match(line)
+        leave_match = leave_dir_pattern.match(line)
+        cmd_match = cmd_pattern.match(line)
+
+        if enter_match:
+            directory_stack.append(enter_match.group(1))
+        elif leave_match:
+            directory_stack.pop()
+        elif cmd_match:
+            # current_directory = directory_stack[-1] if directory_stack else None
+            directory = directory_stack[-1] if directory_stack else None
+            command = cmd_match.group(1)
+            filename_match = file_pattern.search(command)
+            filename = command.split()[-1]
+            filename = filename_match.group(0) if filename_match else None
+            if filename:
+                print("filename:"+filename)
+                print("Current dir:" + directory) 
+                # Determine the directory containing the file
+                for dir in reversed(directory_stack):
+                    file_path = os.path.join(dir, filename)
+                    if os.path.exists(file_path):
+                        directory = dir
+                        break
+                else:
+                    directory = directory_stack[-1] if directory_stack else None
+
+            commands.append({
+                "directory": directory,
+                "command": command,
+                "file": filename
+            })
+
+    # Convert to JSON
+    json_output = json.dumps(commands, indent=4)
+    print(json_output)
+    
+    with open("compile_commands.json","w") as outfile:
+        outfile.write(json_output)
+

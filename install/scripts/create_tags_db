@@ -1,0 +1,70 @@
+#!/bin/bash
+
+# Description: 
+# Create the DB of files to be read by ctags and cscope.
+#
+# Usage:
+# cd <root project working directory>
+# create_tags_db <language, e.g., c++>
+# 
+
+SCRIPT_DIR=$(dirname $(realpath $0))
+
+DB_FILES_INPUT=cscope.files
+ERRORS_FILE=./create_tags_db.errors
+
+# Create list of files. Add the path regex that will be read and the file types to be read ([chxsS])
+echo "Creating list of files that will be used by cscope and ctags..."
+# Example used in SAH
+# find $WORKING_DIR \( -path "*/wlan-manager*/*" -o \
+#         -path "*/ssw*/*" -o \
+#         -path "*/pwhm*/*" -o \
+#         -path "*/mod-whm-*/*" -o \
+#         -path "*/sahpairing*/*" -o \
+#         -path "*/libsahtrace*/*" -o \
+# 	      -path "*/libswl*/*" -o \
+# 	      -path "*/libpcb*/*" -o \
+# 	      -path "*/mod-amxb-pcb*/*" -o \
+# 	      -path "*/libamx*/*" \) \
+#         \( -not -path "*/ipkg-install/*" \) \
+# 	      -name "*.[chxsS]"  -print > $DB_FILES_INPUT
+# echo -e "List of files created at: $DB_FILES_INPUT\n"
+
+> $DB_FILES_INPUT
+
+if [ "$1" == "c++" ]; then
+  echo "Adding stdlib to the list of files used to create tags."
+  cp -R /usr/include/c++/11/ $DB_DIR/cpp_src
+  # it is not necessary to rename headers without an extension
+  # replace the "namespace std _GLIBCXX_VISIBILITY(default)" with "namespace std"
+  find $DB_DIR/cpp_src -type f | xargs sed -i 's/namespace std _GLIBCXX_VISIBILITY(default)/namespace std/'
+  CTAGS_OPTIONS=" --c++-kinds=+p --fields=+iaS --extra=+q --language-force=C++ -I _GLIBCXX_NOEXCEP" 
+elif [ "$1" == "c" ]; then
+  AM_CTAGSFLAGS=$(cat <<EOF 
+      -I $SCRIPT_DIR/c_symbols_ignore_list.txt 
+      --c-types=+l
+      --language-force=C
+EOF
+)
+  echo "Adding c libs to the list of files used to create tags."
+
+cat <<EOF >> $DB_FILES_INPUT
+/usr/include/fcntl.h
+/usr/include/stdio.h
+/usr/include/stdlib.h
+/usr/include/string.h
+/usr/include/unistd.h
+EOF
+fi
+
+find . \
+	      -type f -regex ".*\.\(cpp\|h\|c\|hpp\)"  -print  -exec readlink {} \; >> $DB_FILES_INPUT 2> $ERRORS_FILE
+echo -e "List of files created at: $DB_FILES_INPUT\n"
+
+echo "Generating cscope.out file..."
+cscope -b -q -k -i $DB_FILES_INPUT
+echo -e "Done!!!\n"
+echo "Generating tags file..."
+# echo ctags $AM_CTAGSFLAGS -L $DB_FILES_INPUT 
+ctags $CTAGS_OPTIONS -V -L $DB_FILES_INPUT 
+echo "Done!!!"

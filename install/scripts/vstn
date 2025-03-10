@@ -1,0 +1,3 @@
+#!/bin/sh
+. ~/.myenvars
+vim --servername $VI_SERVER --remote-send ":tabnew $*<CR><CR>"
