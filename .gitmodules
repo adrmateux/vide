@@ -1,0 +1,17 @@
+[submodule "install/dot-vim/pack/git-plugins/opt/vim-cpp-enhanced-highlight"]
+	path = install/dot-vim/pack/git-plugins/opt/vim-cpp-enhanced-highlight
+	url = https://github.com/octol/vim-cpp-enhanced-highlight.git
+[submodule "install/dot-vim/pack/bundle/start/vim-mucomplete"]
+	path = install/dot-vim/pack/bundle/start/vim-mucomplete
+	url = https://github.com/lifepillar/vim-mucomplete.git
+[submodule "install/dot-vim/pack/completion/opt/clang_complete"]
+	path = install/dot-vim/pack/completion/opt/clang_complete
+	url = git@github.com:adrmateux/clang_complete.git
+	branch = compatibility_with_ctags_cscope
+[submodule "install/dot-vim/pack/completion/opt/coc.nvim"]
+	path = install/dot-vim/pack/completion/opt/coc.nvim
+	url = https://github.com/neoclide/coc.nvim.git
+	branch = release
+[submodule "install/dot-vim/pack/ide-tools/opt/CCTree"]
+	path = install/dot-vim/pack/ide-tools/opt/CCTree
+	url = https://github.com/hari-rangarajan/CCTree.git
