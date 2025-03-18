@@ -14,16 +14,25 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 -------------------------------------------------------------------------------
 |:.w !!      | execute line in shell  |:.w !bash   | execute line in shell    |
 -------------------------------------------------------------------------------
-|:g/text:    | create filtered view   |:verb map   | debug key equence        |      
+|:g/text:    | create filtered view   |:verb map   | debug key equence        |
 -------------------------------------------------------------------------------
-| yy:@"      |exec current line on ex |<C-m>o      | mouse toggle on/off      |      
+| yy:@"      |exec current line on ex |<C-m>o      | mouse toggle on/off      |
 -------------------------------------------------------------------------------
-| kk/ko      |vss open/close tab on vs|<C-w>{<C-W>z| open/close prev.wind.tag |      
+| kk/ko      |vss open/close tab on vs|<C-w>{<C-W>z| open/close prev.wind.tag |
 -------------------------------------------------------------------------------
-| <C-m>z     |generate uml diagram    |            |                          |      
+| <C-m>z     |generate uml diagram    |            |                          |
 -------------------------------------------------------------------------------
-|            |                        |            |                          |      
+|            |                        |            |                          |
 -------------------------------------------------------------------------------
+
+## Installation
+### Pre-reqs
+* node.js, if you are going to use coc
+### Installing
+git clone git@github.com:adrmateux/vide.git
+cd vide
+git submodule init
+git submodule update
 
 
 ## Workflow

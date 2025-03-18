@@ -1,7 +1,7 @@
 # vide
 This is vide. A very simplified ide that uses vim as it's main editor.
 
-The philosophy behind it is to make vide as simplest as possible, without depending package based programing framework, like Node.js/python, wich may introduce dependencies on "god only knows what the hell of s... they will try to stick in your a.."
+The philosophy behind it is to make vide as simplest as possible.
 
 Nonetheless, there are some dependencies:
 * ctags

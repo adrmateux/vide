@@ -35,6 +35,11 @@ function! Start_ide(...)
     echo "ERROR: Undefined IDE chain selected."
   endif
 
+  " Misc function mappings
+  " Creation of UML diagrams. Requires: plantuml
+  "map <C-m>z :/@startuml/,/@enduml/w! .tmp.uml.txt<CR>:!reset<CR>:!plantuml .tmp.uml.txt<CR>:!rm .tmp.uml.txt<CR>:!eog 
+  map <C-m>z :call GenerateUMLDiagram()<CR>
+
 endfunction
 
 
@@ -56,10 +61,6 @@ function Vide_common_ide_settings()
   call Netrw_client()
   call StatusLine_settings()
 
-  " Misc function mappings
-  " Creation of UML diagrams. Requires: plantuml
-  "map <C-m>z :/@startuml/,/@enduml/w! .tmp.uml.txt<CR>:!reset<CR>:!plantuml .tmp.uml.txt<CR>:!rm .tmp.uml.txt<CR>:!eog 
-  map <C-m>z :call GenerateUMLDiagram()<CR>
 endfunction
 
 
