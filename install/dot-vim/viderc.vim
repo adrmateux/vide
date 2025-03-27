@@ -11,7 +11,7 @@ function! Start_ide(...)
   " --- core editor settings ---
   set number
   set mouse=a
-  colorscheme default
+  colorscheme desert
 
   let g:ide_chain=confirm('Select IDE chain:',"&no chain\n&clangd complete\nc&oc",1)
 
@@ -33,6 +33,21 @@ function! Start_ide(...)
 
   else
     echo "ERROR: Undefined IDE chain selected."
+  endif
+
+  let g:ide_ai=confirm('Select AI:',"&no AI\n&Copilot",1)
+
+  if g:ide_ai == 1
+    " No AI
+    echo "No AI"
+  
+  elseif g:ide_ai == 2
+    " copilot
+    echo "Loading AI ..."
+    packadd copilot.vim
+
+  else
+    echo "ERROR: Undefined AI selected."
   endif
 
   " Misc function mappings

@@ -37,6 +37,9 @@ vso(){
   local FILENAME=${1%%:*}
   local TMP=${1##$FILENAME:}
   local LINENUMBER=${TMP%%:*}
+  if [ "$FILENAME" = "$LINENUMBER" ]; then
+    LINENUMBER=0
+  fi
   local TEMP_FILENAME=$(realpath $FILENAME)
   printf "Opening file: $TEMP_FILENAME \n"
   vim --servername $VI_SERVER --remote-send '<C-\><C-N>:tabnew'"$TEMP_FILENAME"'<CR>'
