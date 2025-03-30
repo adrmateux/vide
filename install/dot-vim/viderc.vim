@@ -9,6 +9,10 @@ function! Start_ide(...)
   echo "Current Working Directory:"
   pwd 
   " --- core editor settings ---
+  nnoremap j gj
+  nnoremap k gk
+  nnoremap <Down> gj
+  nnoremap <Up> gk
   set number
   set mouse=a
   colorscheme desert
