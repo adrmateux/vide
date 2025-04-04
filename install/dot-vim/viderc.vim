@@ -18,7 +18,6 @@ function! Start_ide(...)
   colorscheme desert
 
   let g:ide_chain=confirm('Select IDE chain:',"&no chain\n&clangd complete\nc&oc",1)
-
   if g:ide_chain == 1
     " No chain
     echo "No ide chain"
@@ -40,7 +39,6 @@ function! Start_ide(...)
   endif
 
   let g:ide_ai=confirm('Select AI:',"&no AI\n&Copilot",1)
-
   if g:ide_ai == 1
     " No AI
     echo "No AI"
@@ -48,7 +46,7 @@ function! Start_ide(...)
   elseif g:ide_ai == 2
     " copilot
     echo "Loading AI ..."
-    packadd copilot.vim
+    call Vide_AI_Copilot()
 
   else
     echo "ERROR: Undefined AI selected."
@@ -177,3 +175,31 @@ function! Vimide_clipboard_layout()
   set nonumber
   set signcolumn=no
 endfunction
+
+function! Vide_AI_Copilot()
+  packadd copilot.vim
+  " Enable or disable Copilot on a per-buffer basis
+  let g:copilot_buffer_state = {}
+  augroup copilot_buffer
+    autocmd!
+    autocmd BufEnter * :call Copilot_Control()
+    " autocmd BufLeave * let g:copilot_buffer_state[bufnr('%')] = (get(g:copilot_buffer_state, bufnr('%'), 0) == 1 ? 1 : 0)
+  augroup END
+
+  " Enable Copilot in the current buffer
+  command! CopilotEnable let g:copilot_buffer_state[bufnr('%')] = 1 | Copilot enable
+  " Disable Copilot in the current buffer
+  command! CopilotDisable let g:copilot_buffer_state[bufnr('%')] = 0 | Copilot disable
+
+endfunction
+
+function! Copilot_Control()
+  if get(g:copilot_buffer_state, bufnr('%'), 0) == 1 
+    Copilot enable
+    echo "Copilot activated for the current buffer" 
+  else
+    Copilot disable
+    echo "Copilot deactivated for the current buffer" 
+  endif
+endfunction
+
