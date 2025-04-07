@@ -178,6 +178,14 @@ endfunction
 
 function! Vide_AI_Copilot()
   packadd copilot.vim
+
+  " Mappings: ALT ], ALT [ not working. Use then:
+  imap <C-i>n <Plug>(copilot-next)
+  imap <C-i>p <Plug>(copilot-previous)
+  imap <C-i>d <Plug>(copilot-dismiss)
+  imap <C-i>s <Plug>(copilot-suggest)
+  imap <C-i>w <Plug>(copilot-accept-word)
+
   " Enable or disable Copilot on a per-buffer basis
   let g:copilot_buffer_state = {}
   augroup copilot_buffer

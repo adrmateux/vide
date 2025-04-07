@@ -20,9 +20,11 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 -------------------------------------------------------------------------------
 | kk/ko      |vss open/close tab on vs|<C-w>{<C-W>z| open/close prev.wind.tag |
 -------------------------------------------------------------------------------
-| <C-m>z     |generate uml diagram    |            |                          |
+| <C-m>z     |generate uml diagram    | <C-i>s     | Copilot suggest          |
 -------------------------------------------------------------------------------
-|            |                        |            |                          |
+| <C-i>n     | Copilot next sugestion | <C-i>w     | Copilot accept word      |
+-------------------------------------------------------------------------------
+| <C-i>d     |Copilot dismiss suggest |            |                          |
 -------------------------------------------------------------------------------
 
 ## Installation
