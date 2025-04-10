@@ -27,6 +27,13 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 | <C-i>d     |Copilot dismiss suggest |            |                          |
 -------------------------------------------------------------------------------
 
+## Auto-complete
+### mu-complete
+Type:
+```
+:packadd vim-mucomplete
+```
+
 ## Installation
 ### Pre-reqs
 * node.js, if you are going to use coc
