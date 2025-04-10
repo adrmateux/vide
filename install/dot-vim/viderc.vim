@@ -1,8 +1,10 @@
 source ~/.vim/helpers.vim
 
+
 function! Vide_version()
   let g:Vide_version="0.1.0
 endfunction
+
 
 function! Start_ide(...)
   echo "Starting IDE support"
@@ -38,14 +40,14 @@ function! Start_ide(...)
     echo "ERROR: Undefined IDE chain selected."
   endif
 
-  let g:ide_ai=confirm('Select AI:',"&no AI\n&Copilot",1)
+  let g:ide_ai=confirm('Select AI:',"&no AI\n&copilot",1)
   if g:ide_ai == 1
     " No AI
     echo "No AI"
   
   elseif g:ide_ai == 2
     " copilot
-    echo "Loading AI ..."
+    echo "Loading Copilot AI ..."
     call Vide_AI_Copilot()
 
   else
@@ -89,6 +91,7 @@ function! Clang_complete_plugin()
   let g:clang_user_options = '-std=c++11'
   let g:clang_complete_auto = 1
 endfunction
+
 
 function! Coc_nvim_plugin()
   packadd coc.nvim
@@ -139,6 +142,7 @@ function! StatusLine_settings()
   set statusline+=\ %P    "percent through file
 endfunction
 
+
 function! Load_tags_db()
   if !exists("g:tags_db_loaded") 
     " ctags
@@ -156,6 +160,7 @@ function! Load_tags_db()
   endif
 endfunction
 
+
 function! Load_CCTreeDB()
   " CCTree  
   packadd CCTree
@@ -171,10 +176,12 @@ function! Load_CCTreeDB()
   map <C-F11> :call Load_CCTreeDB()<CR>
 endfunction
 
+
 function! Vimide_clipboard_layout()
   set nonumber
   set signcolumn=no
 endfunction
+
 
 function! Vide_AI_Copilot()
   packadd copilot.vim
@@ -201,6 +208,7 @@ function! Vide_AI_Copilot()
 
 endfunction
 
+
 function! Copilot_Control()
   if get(g:copilot_buffer_state, bufnr('%'), 0) == 1 
     Copilot enable
@@ -210,4 +218,3 @@ function! Copilot_Control()
     echo "Copilot deactivated for the current buffer" 
   endif
 endfunction
-

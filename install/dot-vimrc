@@ -12,21 +12,20 @@ set clipboard=unnamedplus
 
 " mucomplete - https://github.com/lifepillar/vim-mucomplete
 " for automatic completion
-"set completeopt+=menuone
-" ,or wait for <tab> or <s-tab>
+set completeopt+=menuone
+" set completeopt+=noselect
 set completeopt+=noinsert
-"
+set completeopt+=longest
+
 " recommended settings:
 set shortmess+=c   " Shut off completion messages
 set belloff+=ctrlg " Add only if Vim beeps during completion
-let g:mucomplete#enable_auto_at_startup = 0
+let g:mucomplete#enable_auto_at_startup = 1 
 " Enabled and disabled at any time with :MUcompleteAutoToggle
 " Then, MUcomplete will kick in only when you pause typing. 
 let g:mucomplete#completion_delay = 2
 " The delay can be adjusted, of course: see :help mucomplete-customization.
 set noinfercase
-set completeopt-=preview
-set completeopt+=menuone,noselect
 
 " More visibility when autocomplete file names on the :ex command prompt
 set wildmode=longest,list,full
@@ -37,6 +36,7 @@ set term=xterm-256color
 
 " Dictionaries
 set dictionary+=/usr/share/dict/american-english
+set dictionary+=/usr/share/dict/spanish
 
 " The best color scheme so far
 colorscheme slate
@@ -98,7 +98,6 @@ set shiftwidth=2
 set expandtab
 " set number
 
-set completeopt=longest,menuone
 
 " Solves the problem "Press ENTER or type command to continue" when using netrw to open file on a vimserver
 " , but adds 2 lines to ex cmdline 
