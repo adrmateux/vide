@@ -15,3 +15,6 @@
 [submodule "install/dot-vim/pack/completion/opt/copilot.vim"]
 	path = install/dot-vim/pack/completion/opt/copilot.vim
 	url = https://github.com/github/copilot.vim.git
+[submodule "install/dot-vim/pack/completion/opt/vim-mucomplete"]
+	path = install/dot-vim/pack/completion/opt/vim-mucomplete
+	url = https://github.com/lifepillar/vim-mucomplete.git
