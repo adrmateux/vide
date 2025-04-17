@@ -12,10 +12,10 @@ set clipboard=unnamedplus
 
 " mucomplete - https://github.com/lifepillar/vim-mucomplete
 " for automatic completion
+" set completeopt+=menu
 set completeopt+=menuone
-" set completeopt+=noselect
+set completeopt+=noselect
 set completeopt+=noinsert
-set completeopt+=longest
 
 " recommended settings:
 set shortmess+=c   " Shut off completion messages

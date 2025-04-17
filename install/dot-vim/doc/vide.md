@@ -29,7 +29,7 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 
 ## Auto-complete
 ### mu-complete
-Type:
+In order to use mu-complete type:
 ```
 :packadd vim-mucomplete
 ```
@@ -117,7 +117,6 @@ wld -> wld : hello_3
 ```
 :/@startuml/,/@enduml/w! .tmp.uml.txt|!reset;plantuml .tmp.uml.txt; rm .tmp.uml.txt;eog diag_name.png
 ```
-
 
 
 #### Shortcuts
@@ -333,6 +332,15 @@ ctags -L ~/workspace/vide/scopedb/cscope.files
 Pluning installed at pack/completion/start/clang_complete
 It used the file .clang_complete
 See pack/completion/start/clang_complete/README.md
+
+### Using spelling correction <C-u>
+In order to use the aspell for english/french/spanish:
+```
+:let $LC_MESSAGES = "fr"
+:let $LC_MESSAGES = "es"
+:let $LC_MESSAGES = ""
+:let $LC_MESSAGES = "pt_BR"
+```
 
 ### END OF EXTRA STUFF SECTION
 
