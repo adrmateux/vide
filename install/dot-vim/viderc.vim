@@ -97,6 +97,8 @@ function! Coc_nvim_plugin()
   packadd coc.nvim
   let g:coc_disable_startup_warning = 1
   source ~/.vim/coc-nvim.vim
+  " Mapping to allow ins-completion to work with coc.nvim
+  inoremap <expr> <C-y> pumvisible() ? "\<C-y>" : "\<C-e>"
 endfunction
 
 

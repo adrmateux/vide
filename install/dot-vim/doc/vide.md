@@ -24,7 +24,7 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 -------------------------------------------------------------------------------
 | <C-i>n     | Copilot next sugestion | <C-i>w     | Copilot accept word      |
 -------------------------------------------------------------------------------
-| <C-i>d     |Copilot dismiss suggest |            |                          |
+| <C-i>d     |Copilot dismiss suggest | <C-y>      | Completion with coc.nvim |
 -------------------------------------------------------------------------------
 
 ## Auto-complete
