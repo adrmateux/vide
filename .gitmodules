@@ -18,3 +18,6 @@
 [submodule "install/dot-vim/pack/completion/opt/vim-mucomplete"]
 	path = install/dot-vim/pack/completion/opt/vim-mucomplete
 	url = https://github.com/lifepillar/vim-mucomplete.git
+[submodule "install/dot-vim/pack/completion/opt/vim-ai"]
+	path = install/dot-vim/pack/completion/opt/vim-ai
+	url = https://github.com/madox2/vim-ai.git
