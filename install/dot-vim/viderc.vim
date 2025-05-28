@@ -186,6 +186,13 @@ endfunction
 
 
 function! Vide_AI_Copilot()
+  " To avoid problems with extremely low <TAB>
+  set timeoutlen=10
+
+  " Don't use tab for completion with copilot. Use C-j
+  imap <silent><script><expr> <C-j> copilot#Accept("\<CR>")
+  let g:copilot_no_tab_map = v:true
+
   packadd copilot.vim
 
   " Mappings: ALT ], ALT [ not working. Use then:

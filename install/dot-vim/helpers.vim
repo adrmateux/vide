@@ -24,7 +24,7 @@ command! Bdi :call DeleteInactiveBufs()
 function! GenerateUMLDiagram()
     let l:save_pos = getpos(".")
     " TODO: Verify if plantuml and eog are installed
-    let l:start_line = search('@startuml \(\S\+\)', 'c')
+    let l:start_line = search('@startuml\s*\(\S\+\)', 'c')
     echo l:start_line
     if l:start_line == 0
         echo "No start pattern found."
@@ -33,7 +33,7 @@ function! GenerateUMLDiagram()
     let l:line = getline(l:start_line)
 
     echo "Start line: " . l:line
-    let l:match = matchstr(l:line, '@startuml \zs\S\+')
+    let l:match = matchstr(l:line, '@startuml\s*\zs\S\+')
     echo "The diagram name:" . l:match
 
     if empty(l:match)

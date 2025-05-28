@@ -118,5 +118,3 @@ nmap bp :bprevious<CR>
 " Selection in insert mode
 :inoremap <c-s><left> <esc>vb
 :inoremap <c-s><right> <esc>ve
-
-
