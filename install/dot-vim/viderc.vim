@@ -40,7 +40,7 @@ function! Start_ide(...)
     echo "ERROR: Undefined IDE chain selected."
   endif
 
-  let g:ide_ai=confirm('Select AI:',"&no AI\n&copilot",1)
+  let g:ide_ai=confirm('Select AI:',"&no AI\n&copilot\n&llama.vim",1)
   if g:ide_ai == 1
     " No AI
     echo "No AI"
@@ -50,6 +50,11 @@ function! Start_ide(...)
     echo "Loading Copilot AI ..."
     call Vide_AI_Copilot()
 
+  elseif g:ide_ai == 3
+    " llama.vim
+    echo "Loading Llama.vim ..."
+    call Vide_AI_LlamaVim()
+
   else
     echo "ERROR: Undefined AI selected."
   endif
@@ -58,7 +63,6 @@ function! Start_ide(...)
   " Creation of UML diagrams. Requires: plantuml
   "map <C-m>z :/@startuml/,/@enduml/w! .tmp.uml.txt<CR>:!reset<CR>:!plantuml .tmp.uml.txt<CR>:!rm .tmp.uml.txt<CR>:!eog 
   map <C-m>z :call GenerateUMLDiagram()<CR>
-
 endfunction
 
 
@@ -79,7 +83,6 @@ function Vide_common_ide_settings()
   let g:termdebugger='gdb-multiarch'
   call Netrw_client()
   call StatusLine_settings()
-
 endfunction
 
 
@@ -214,7 +217,11 @@ function! Vide_AI_Copilot()
   command! CopilotEnable let g:copilot_buffer_state[bufnr('%')] = 1 | Copilot enable
   " Disable Copilot in the current buffer
   command! CopilotDisable let g:copilot_buffer_state[bufnr('%')] = 0 | Copilot disable
+endfunction
 
+function! Vide_AI_LlamaVim()
+  let g:llama_config = { 'show_info': 0 }
+  packadd llama.vim 
 endfunction
 
 

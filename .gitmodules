@@ -21,3 +21,6 @@
 [submodule "install/dot-vim/pack/completion/opt/vim-ai"]
 	path = install/dot-vim/pack/completion/opt/vim-ai
 	url = https://github.com/madox2/vim-ai.git
+[submodule "install/dot-vim/pack/completion/opt/llama.vim"]
+	path = install/dot-vim/pack/completion/opt/llama.vim
+	url = https://github.com/ggml-org/llama.vim
