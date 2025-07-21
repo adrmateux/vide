@@ -60,9 +60,9 @@ function! Start_ide(...)
   endif
 
   " Misc function mappings
-  " Creation of UML diagrams. Requires: plantuml
+  " Generation (<C-g>) of UML diagrams. Requires: plantuml
   "map <C-m>z :/@startuml/,/@enduml/w! .tmp.uml.txt<CR>:!reset<CR>:!plantuml .tmp.uml.txt<CR>:!rm .tmp.uml.txt<CR>:!eog 
-  map <C-m>z :call GenerateUMLDiagram()<CR>
+  nmap <C-m>z :call GenerateUMLDiagram()<CR>
 endfunction
 
 
@@ -220,6 +220,14 @@ function! Vide_AI_Copilot()
 endfunction
 
 function! Vide_AI_LlamaVim()
+  let l:check = system('pgrep -x llama-server')
+  if empty(l:check)
+    call system('nohup llama-server --port 8012 -m /home/cnous/.cache/llama.cpp/ggml-org_Qwen2.5-Coder-3B-Q8_0-GGUF_qwen2.5-coder-3b-q8_0.gguf -ngl 99 -fa -dt 0.1 --ubatch-size 512 --batch-size 1024 --ctx-size 0 --cache-reuse 256 > /dev/null 2>&1 &')
+    echo "llama-server started."
+  else
+    echo "llama-server is already running."
+  endif
+  
   let g:llama_config = { 'show_info': 0 }
   packadd llama.vim 
 endfunction

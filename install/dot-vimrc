@@ -48,7 +48,7 @@ set ignorecase
 set smartcase
 
 " spell checker aspell
-map <C-u> :w!<CR>:!aspell check %<CR>:e! %<CR>
+nmap <C-u> :w!<CR>:!aspell check %<CR>:e! %<CR>
 
 " Toggle mouse activate
 function! ToggleMouse()
@@ -63,7 +63,7 @@ function! ToggleMouse()
         echo "Mouse on"
     endif
 endfunc
-map <C-m>o :call ToggleMouse()<CR>
+nmap <C-m>o :call ToggleMouse()<CR>
 
 "The split is bellow the current viewport
 set splitbelow
