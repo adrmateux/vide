@@ -4,6 +4,10 @@ let g:coc_disable_startup_warning = 1
 set display=truncate
 set hidden
 
+" Show the following hidded characters as configured (use `set list` to show
+" them. From experience with copy paste bash script from copilot).
+set listchars=tab:>-,trail:~,nbsp:_
+
 " Basic for omnicompletition -- REALLY??? Investigate
 filetype plugin on
 
@@ -113,6 +117,7 @@ nmap bp :bprevious<CR>
 
 " Usefull mappings
 " Write and delete buffer
+" NOTE: Don't capitalize the first letter -> E183: User defined commands must start with an uppercase letter
 :command Wbd :w|bd
 
 " Selection in insert mode

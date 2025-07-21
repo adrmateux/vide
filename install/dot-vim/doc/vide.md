@@ -222,8 +222,33 @@ gf            - Open file on the same window
 CTRL W SHFT n - Enable terminal scroll
 SHFT i        - Return to normal mode
 
-### END OF WORKFLOW SECTION
+### Scrolling in :terminal
+Enter Terminal Normal Mode:
 
+Press Ctrl-w then N (or Ctrl-\ then Ctrl-n) to switch from terminal input mode to Terminal Normal Mode.
+You’ll now be able to move around like in a regular buffer.
+Scroll:
+
+Use normal Vim movement keys:
+k / j to move up/down
+Ctrl-u / Ctrl-d to scroll up/down half a screen
+gg / G to go to the top/bottom
+
+### Copying Text from :terminal
+Enter Visual Mode:
+
+While in Terminal Normal Mode, press v (character-wise), V (line-wise), or Ctrl-v (block-wise) to start selecting text.
+Select the Text:
+
+Move the cursor to highlight the desired text.
+Yank (Copy):
+
+Press y to yank the selected text into a register.
+Return to Terminal Input Mode:
+
+Press i to go back to terminal input mode.
+
+### END OF WORKFLOW SECTION
 
 ## EXTRA STUFF
 ## copy paste

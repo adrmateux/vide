@@ -190,7 +190,7 @@ endfunction
 
 function! Vide_AI_Copilot()
   " To avoid problems with extremely low <TAB>
-  set timeoutlen=10
+  " set timeoutlen=100
 
   " Don't use tab for completion with copilot. Use C-j
   imap <silent><script><expr> <C-j> copilot#Accept("\<CR>")
