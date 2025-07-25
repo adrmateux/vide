@@ -18,6 +18,8 @@ function! Start_ide(...)
   set number
   set mouse=a
   colorscheme desert
+  call system('mkdir -p ~/.cache/.vimswap')
+  set directory^=$HOME/.cache/.vimswap//
 
   let g:ide_chain=confirm('Select IDE chain:',"&no chain\n&clangd complete\nc&oc",1)
   if g:ide_chain == 1

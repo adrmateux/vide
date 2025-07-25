@@ -7,26 +7,17 @@ vss/vss1            - vs file explorer
 vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi commands. To quit it press "q" followed by enter.
 
 ## Top 100  shortcuts/command
--------------------------------------------------------------------------------
-| Com./Shor. | Description            | Com./Shor. | Description              |
--------------------------------------------------------------------------------
-|:Wbd        | write and close buff   |:h digraph  | show special char's list |
--------------------------------------------------------------------------------
-|:.w !!      | execute line in shell  |:.w !bash   | execute line in shell    |
--------------------------------------------------------------------------------
-|:g/text:    | create filtered view   |:verb map   | debug key equence        |
--------------------------------------------------------------------------------
-| yy:@"      |exec current line on ex |<C-m>o      | mouse toggle on/off      |
--------------------------------------------------------------------------------
-| kk/ko      |vss open/close tab on vs|<C-w>{<C-W>z| open/close prev.wind.tag |
--------------------------------------------------------------------------------
-| <C-m>z     |generate uml diagram    | <C-i>s     | Copilot suggest          |
--------------------------------------------------------------------------------
-| <C-i>n     | Copilot next sugestion | <C-i>w     | Copilot accept word      |
--------------------------------------------------------------------------------
-| <C-i>d     |Copilot dismiss suggest | <C-y>      | Completion with coc.nvim |
--------------------------------------------------------------------------------
-| <C-u>      | Spell check            |
+| Com./Shor.  | Description              | Com./Shor.        | Description              |
+|-------------|--------------------------|-------------------|--------------------------|
+| :Wbd        | write and close buff     | :h digraph        | show special char's list |
+| :.w !!      | execute line in shell    | :.w !bash         | execute line in shell    |
+| :g/text:    | create filtered view     | :verb map         | debug key equence        |
+|  yy:@"      | exec current line on ex  | \<C-m\>o          | mouse toggle on/off      |
+|  kk/ko      | vss open/close tab on vs | \<C-w\>{<C-W>z    | open/close prev.wind.tag |
+| \<C-m\>z    | generate uml diagram     | \<C-i\>s          | Copilot suggest          |
+| \<C-i\>n    | Copilot next sugestion   | \<C-i\>w          | Copilot accept word      |
+| \<C-i\>d    | Copilot dismiss suggest  | \<C-y\>           | Completion with coc.nvim |
+| \<C-u\>     | Spell check              | :!ghostwriter % & | Edit % with ghostwriteri |
 
 ## Auto-complete
 ### mu-complete
@@ -281,7 +272,7 @@ Next, it will enter vim and a message of npm showing coc was compiled will appea
 
 See https://stackoverflow.com/questions/69841916/neovim-coc-nvim-build-inderx-js-not-found-please-install-dependencies-and-com
 
-### Configuration for coc-clangd
+#### Configuration for coc-clangd
 In vim:
 ```
 CocInstall coc-clangd
@@ -289,6 +280,16 @@ CocInstall coc-clangd
 
 See:
 https://github.com/clangd/coc-clangd?tab=readme-ov-file
+
+#### Updating coc.nvim
+When updating coc.nvim you MUST erase the folder, go to vide root directory, and execute the following commands:
+```
+git submodule init install/dot-vim/pack/completion/opt/coc.nvim
+git submodule update install/dot-vim/pack/completion/opt/coc.nvim
+cd install/dot-vim/pack/completion/opt/
+vim -c "helptags coc.nvim/doc/ | q"
+```
+If you don't do this there might be all sort of errors.
 
 
 ### cscope
