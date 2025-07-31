@@ -23,7 +23,7 @@ vs(){
         printf "\n\nWARNING: No tags or cscope.files found!\n\n"
       fi
     fi
-    vim $DEBUG --servername $VI_SERVER -c "source ~/.vim/viderc.vim" -c ":view ~/.vim/doc/vide.md" $NEW_TAB -c ":echo \"Loading VIDE DBs ...\"" -c ":call Start_ide()"
+    vim $DEBUG --servername $VI_SERVER -c "source ~/.vim/viderc.vim" -c ":echo \"Loading VIDE DBs ...\"" -c ":call Start_ide()" -c ":view ~/.vim/doc/vide.md" $NEW_TAB  
   else
     printf "Vim server (VI_SERVER=$VI_SERVER) already running!"
   fi

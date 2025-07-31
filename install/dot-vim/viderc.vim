@@ -143,10 +143,19 @@ function! StatusLine_settings()
   set statusline+=%m      "modified flag
   set statusline+=%r      "read only flag
   set statusline+=%y      "filetype
+  set statusline+=%{StatusAI()}
   set statusline+=%=      "left/right separator
   set statusline+=%c,     "cursor column
   set statusline+=%l/%L   "cursor line/total lines
   set statusline+=\ %P    "percent through file
+endfunction
+
+function! StatusAI()
+  if exists('g:copilot_buffer_state')
+    return '[ai:' .  get(g:copilot_buffer_state, bufnr('%'), 0) . ']'
+  else
+    return '[ai:?]'
+  endif
 endfunction
 
 
@@ -211,6 +220,7 @@ function! Vide_AI_Copilot()
   let g:copilot_buffer_state = {}
   augroup copilot_buffer
     autocmd!
+    autocmd BufReadPost * call Copilot_Control()
     autocmd BufEnter * :call Copilot_Control()
     " autocmd BufLeave * let g:copilot_buffer_state[bufnr('%')] = (get(g:copilot_buffer_state, bufnr('%'), 0) == 1 ? 1 : 0)
   augroup END
@@ -236,11 +246,14 @@ endfunction
 
 
 function! Copilot_Control()
+  if has_key(g:copilot_buffer_state, bufnr('%') )
+  else
+    let g:copilot_buffer_state[bufnr('%')] = 0 
+  endif
+ 
   if get(g:copilot_buffer_state, bufnr('%'), 0) == 1 
     Copilot enable
-    echo "Copilot activated for the current buffer" 
   else
     Copilot disable
-    echo "Copilot deactivated for the current buffer" 
   endif
 endfunction
