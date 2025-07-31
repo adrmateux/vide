@@ -122,7 +122,7 @@ function! Netrw_server()
   " Press <C-CR> will open file on a specific servername, tab 1, window 1. 
   " After using it, all subsequent <CR> will do the same
   let g:netrw_servername=$VI_SERVER
-  let g:netrw_browse_split=[$VI_SERVER,0,0]
+  let g:netrw_browse_split=[$VI_SERVER,1,1]
   "Execute command on file
   map <C-f> mf mx
   nmap kk :silent! !vsx :0tabnew<CR><C-l>:redraw!<CR>
