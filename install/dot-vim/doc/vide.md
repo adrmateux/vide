@@ -14,10 +14,11 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 | :g/text:    | create filtered view     | :verb map         | debug key equence        |
 |  yy:@"      | exec current line on ex  | \<C-m\>o          | mouse toggle on/off      |
 |  kk/ko      | vss open/close tab on vs | \<C-w\>{<C-W>z    | open/close prev.wind.tag |
-| \<C-m\>z    | generate uml diagram     | \<C-i\>s          | Copilot suggest          |
+| \<C-m\>z    | plantuml diagram gen.    | \<C-i\>s          | Copilot suggest          |
 | \<C-i\>n    | Copilot next sugestion   | \<C-i\>w          | Copilot accept word      |
 | \<C-i\>d    | Copilot dismiss suggest  | \<C-y\>           | Completion with coc.nvim |
 | \<C-u\>     | Spell check              | :!ghostwriter % & | Edit % with ghostwriteri |
+| \\rn        | Rename symbol (Coc)      |
 
 ## Auto-complete
 ### mu-complete

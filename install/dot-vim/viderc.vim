@@ -65,6 +65,8 @@ function! Start_ide(...)
   " Generation (<C-g>) of UML diagrams. Requires: plantuml
   "map <C-m>z :/@startuml/,/@enduml/w! .tmp.uml.txt<CR>:!reset<CR>:!plantuml .tmp.uml.txt<CR>:!rm .tmp.uml.txt<CR>:!eog 
   nmap <C-m>z :call GenerateUMLDiagram()<CR>
+  
+    call StatusLine_settings()
 endfunction
 
 
@@ -84,7 +86,6 @@ function Vide_common_ide_settings()
   packadd termdebug
   let g:termdebugger='gdb-multiarch'
   call Netrw_client()
-  call StatusLine_settings()
 endfunction
 
 
@@ -143,7 +144,9 @@ function! StatusLine_settings()
   set statusline+=%m      "modified flag
   set statusline+=%r      "read only flag
   set statusline+=%y      "filetype
-  set statusline+=%{StatusAI()}
+  if exists('g:copilot_buffer_state')
+    set statusline+=%{StatusAI()}
+  endif
   set statusline+=%=      "left/right separator
   set statusline+=%c,     "cursor column
   set statusline+=%l/%L   "cursor line/total lines

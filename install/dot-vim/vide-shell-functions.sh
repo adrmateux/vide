@@ -54,6 +54,26 @@ vso(){
   fi
 }
 
+vsos(){
+  local FILENAME=${1%%:*}
+  local TMP=${1##$FILENAME:}
+  local LINENUMBER=${TMP%%:*}
+  if [ "$FILENAME" = "$LINENUMBER" ]; then
+    LINENUMBER=0
+  fi
+  local TEMP_FILENAME=$(realpath $FILENAME)
+  printf "Opening file: $TEMP_FILENAME \n"
+  vim --servername $VI_SERVER --remote-send '<C-\><C-N>:split'"$TEMP_FILENAME"'<CR>'
+  RV=$(declare -i NUMBER=$LINENUMBER 2>&1)
+  if [ -z "$RV" ]; then
+    printf "Go to line number: $LINENUMBER\n"
+    vim --servername $VI_SERVER --remote-send ":$LINENUMBER<CR>"
+  else
+    # printf "REMEMBER: Use filename:linumber to go to desired line.\n"
+    :
+  fi
+}
+
 _vsex(){
   # echo "vsex execute vim command: $*"
   vim --servername $VI_SERVER --remote-send "$*"
