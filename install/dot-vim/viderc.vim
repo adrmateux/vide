@@ -18,6 +18,7 @@ function! Start_ide(...)
   set number
   set mouse=a
   colorscheme desert
+  set nowrap
   call system('mkdir -p ~/.cache/.vimswap')
   set directory^=$HOME/.cache/.vimswap//
 
@@ -237,7 +238,8 @@ endfunction
 function! Vide_AI_LlamaVim()
   let l:check = system('pgrep -x llama-server')
   if empty(l:check)
-    call system('nohup llama-server --port 8012 -m /home/cnous/.cache/llama.cpp/ggml-org_Qwen2.5-Coder-3B-Q8_0-GGUF_qwen2.5-coder-3b-q8_0.gguf -ngl 99 -fa -dt 0.1 --ubatch-size 512 --batch-size 1024 --ctx-size 0 --cache-reuse 256 > /dev/null 2>&1 &')
+    " call system('nohup llama-server --port 8012 -m /home/cnous/.cache/llama.cpp/ggml-org_Qwen2.5-Coder-3B-Q8_0-GGUF_qwen2.5-coder-3b-q8_0.gguf -ngl 99 -fa -dt 0.1 --ubatch-size 512 --batch-size 1024 --ctx-size 0 --cache-reuse 256 > /dev/null 2>&1 &')
+    call system('nohup llama-server --fim-qwen-3b-default > /dev/null 2>&1 &')
     echo "llama-server started."
   else
     echo "llama-server is already running."
