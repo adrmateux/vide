@@ -80,13 +80,13 @@ function! GenerateUMLDiagram()
     if l:diag_format == "txt"
       silent execute 'r!cat ' . l:output_file . ".a" . l:diag_format
     elseif l:diag_format == "utxt"
-      silent execute '.+1r!cat ' . l:output_file . "." . l:diag_format
+      silent execute 'r!cat ' . l:output_file . "." . l:diag_format
     else
       silent execute '!' . l:cmd2 ."&"
     endif
     silent execute '!' . l:cmd3 
-    
     redraw!
+    
     echohl MoreMsg
     echo "UML diagram saved to: " . l:output_file . "." . l:diag_format
     echohl None
