@@ -145,7 +145,7 @@ function! StatusLine_settings()
   set statusline+=%m      "modified flag
   set statusline+=%r      "read only flag
   set statusline+=%y      "filetype
-  if exists('g:copilot_buffer_state')
+  if exists('g:copilot_buffer_state') || exists('g:ide_ai')
     set statusline+=%{StatusAI()}
   endif
   set statusline+=%=      "left/right separator
@@ -155,8 +155,17 @@ function! StatusLine_settings()
 endfunction
 
 function! StatusAI()
+  if exists('g:ide_ai')
+    if g:ide_ai == 2 && exists('g:copilot_buffer_state')
+      return '[ai:copilot:' .  get(g:copilot_buffer_state, bufnr('%'), 0) . ']'
+    elseif g:ide_ai == 3 && exists('g:llama_buffer_state')
+      return '[ai:llama:' .  get(g:llama_buffer_state, bufnr('%'), 0) . ']'
+    elseif g:ide_ai == 1
+      return '[ai:none]'
+    endif
+  endif
   if exists('g:copilot_buffer_state')
-    return '[ai:' .  get(g:copilot_buffer_state, bufnr('%'), 0) . ']'
+    return '[ai:copilot:' .  get(g:copilot_buffer_state, bufnr('%'), 0) . ']'
   else
     return '[ai:?]'
   endif
@@ -230,9 +239,9 @@ function! Vide_AI_Copilot()
   augroup END
 
   " Enable Copilot in the current buffer
-  command! CopilotEnable let g:copilot_buffer_state[bufnr('%')] = 1 | Copilot enable
+  command! AIEnable let g:copilot_buffer_state[bufnr('%')] = 1 | Copilot enable
   " Disable Copilot in the current buffer
-  command! CopilotDisable let g:copilot_buffer_state[bufnr('%')] = 0 | Copilot disable
+  command! AIDisable let g:copilot_buffer_state[bufnr('%')] = 0 | Copilot disable
 endfunction
 
 function! Vide_AI_LlamaVim()
@@ -247,6 +256,19 @@ function! Vide_AI_LlamaVim()
   
   let g:llama_config = { 'show_info': 0 }
   packadd llama.vim 
+
+  " Enable or disable Llama.vim on a per-buffer basis
+  let g:llama_buffer_state = {}
+  augroup llama_buffer
+    autocmd!
+    autocmd BufReadPost * call Llama_Control()
+    autocmd BufEnter * :call Llama_Control()
+  augroup END
+
+  " Enable Llama.vim in the current buffer
+  command! AIEnable let g:llama_buffer_state[bufnr('%')] = 1 | LlamaEnable
+  " Disable Llama.vim in the current buffer
+  command! AIDisable let g:llama_buffer_state[bufnr('%')] = 0 | LlamaDisable
 endfunction
 
 
@@ -260,5 +282,18 @@ function! Copilot_Control()
     Copilot enable
   else
     Copilot disable
+  endif
+endfunction
+
+function! Llama_Control()
+  if has_key(g:llama_buffer_state, bufnr('%') )
+  else
+    let g:llama_buffer_state[bufnr('%')] = 0 
+  endif
+ 
+  if get(g:llama_buffer_state, bufnr('%'), 0) == 1 
+    LlamaEnable
+  else
+    LlamaDisable
   endif
 endfunction
