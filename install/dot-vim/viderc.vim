@@ -73,20 +73,44 @@ endfunction
 " ============================================================================
 " AI Selection and Loading
 " ============================================================================
+" ============================================================================
+" AI Selection and Loading
+" ============================================================================
 function! s:Select_and_load_AI()
-  let g:ide_ai = confirm('Select AI:', "&no AI\n&copilot\n&llama.vim", 1)
+  " Initialize global AI tracking if not exists
+  if !exists('g:vide_buffer_ai_type')
+    let g:vide_buffer_ai_type = {}
+  endif
+  if !exists('g:vide_buffer_ai_state')
+    let g:vide_buffer_ai_state = {}
+  endif
   
+  " Set default AI for startup
+  let g:ide_ai = confirm('Select Default AI:', "&no AI\n&copilot\n&llama.vim", 1)
+  
+  " Load all AI plugins at startup
   if g:ide_ai == 1
-    echo "No AI"
+    echo "No default AI"
   elseif g:ide_ai == 2
-    echo "Loading Copilot AI ..."
-    call Vide_AI_Copilot()
+    echo "Loading Copilot AI as default..."
+    call s:Load_AI_plugins('copilot')
   elseif g:ide_ai == 3
-    echo "Loading Llama.vim ..."
-    call Vide_AI_LlamaVim()
+    echo "Loading Llama.vim as default..."
+    call s:Load_AI_plugins('llama')
   else
     echo "ERROR: Undefined AI selected."
+    return
   endif
+  
+  " Load both AI plugins to allow per-buffer switching
+  if g:ide_ai == 2
+    call s:Load_AI_plugins('llama')
+  elseif g:ide_ai == 3
+    call s:Load_AI_plugins('copilot')
+  endif
+  
+  " Setup unified AI control
+  call s:Setup_unified_AI_control()
 endfunction
 
 " ============================================================================
@@ -179,9 +203,7 @@ function! StatusLine_settings()
   set statusline+=%r                             " read only flag
   set statusline+=%y                             " filetype
   
-  if exists('g:copilot_buffer_state') || exists('g:ide_ai')
-    set statusline+=%{StatusAI()}                " AI status
-  endif
+  set statusline+=%{StatusAI()}                  " AI status (per-buffer)
   
   set statusline+=%=                             " left/right separator
   set statusline+=%c,                            " cursor column
@@ -190,20 +212,20 @@ function! StatusLine_settings()
 endfunction
 
 function! StatusAI()
-  " Check for active AI configuration
-  if exists('g:ide_ai')
-    if g:ide_ai == 2 && exists('g:copilot_buffer_state')
-      return '[ai:copilot:' . get(g:copilot_buffer_state, bufnr('%'), 0) . ']'
-    elseif g:ide_ai == 3 && exists('g:llama_buffer_state')
-      return '[ai:llama:' . get(g:llama_buffer_state, bufnr('%'), 0) . ']'
-    elseif g:ide_ai == 1
-      return '[ai:none]'
-    endif
+  if !exists('g:vide_buffer_ai_type')
+    return '[ai:?]'
   endif
   
-  " Fallback for legacy configuration
-  if exists('g:copilot_buffer_state')
-    return '[ai:copilot:' . get(g:copilot_buffer_state, bufnr('%'), 0) . ']'
+  let l:bufnr = bufnr('%')
+  let l:ai_type = s:Get_buffer_AI_type(l:bufnr)
+  let l:ai_state = s:Get_buffer_AI_state(l:bufnr)
+  
+  if l:ai_type == 1
+    return '[ai:none]'
+  elseif l:ai_type == 2
+    return '[ai:copilot:' . l:ai_state . ']'
+  elseif l:ai_type == 3
+    return '[ai:llama:' . l:ai_state . ']'
   else
     return '[ai:?]'
   endif
@@ -252,7 +274,25 @@ endfunction
 " AI Assistants
 " ============================================================================
 " GitHub Copilot AI Assistant
-function! Vide_AI_Copilot()
+" ============================================================================
+" AI Assistants - Plugin Loading
+" ============================================================================
+
+" Load AI plugins (can be called multiple times safely)
+function! s:Load_AI_plugins(ai_type)
+  if a:ai_type == 'copilot'
+    call s:Load_Copilot_plugin()
+  elseif a:ai_type == 'llama'
+    call s:Load_Llama_plugin()
+  endif
+endfunction
+
+" GitHub Copilot AI Assistant
+function! s:Load_Copilot_plugin()
+  if exists('g:copilot_loaded')
+    return
+  endif
+  
   packadd copilot.vim
   
   " Keybindings - Use C-j instead of Tab for acceptance
@@ -266,16 +306,15 @@ function! Vide_AI_Copilot()
   imap <C-i>s <Plug>(copilot-suggest)
   imap <C-i>w <Plug>(copilot-accept-word)
   
-  " Buffer state management
-  call s:Setup_AI_buffer_control('copilot')
-  
-  " Commands for enabling/disabling
-  command! AIEnable let g:copilot_buffer_state[bufnr('%')] = 1 | Copilot enable
-  command! AIDisable let g:copilot_buffer_state[bufnr('%')] = 0 | Copilot disable
+  let g:copilot_loaded = 1
 endfunction
 
 " Llama.vim AI Assistant
-function! Vide_AI_LlamaVim()
+function! s:Load_Llama_plugin()
+  if exists('g:llama_loaded')
+    return
+  endif
+  
   " Start llama-server if not already running
   call s:Start_llama_server()
   
@@ -283,12 +322,32 @@ function! Vide_AI_LlamaVim()
   let g:llama_config = { 'show_info': 0 }
   packadd llama.vim
   
-  " Buffer state management
-  call s:Setup_AI_buffer_control('llama')
+  let g:llama_loaded = 1
+endfunction
+
+" Setup unified AI control system
+function! s:Setup_unified_AI_control()
+  " Create autocommand group for AI control
+  augroup vide_ai_control
+    autocmd!
+    autocmd BufEnter * call s:AI_Buffer_Control()
+  augroup END
   
-  " Commands for enabling/disabling
-  command! AIEnable let g:llama_buffer_state[bufnr('%')] = 1 | LlamaEnable
-  command! AIDisable let g:llama_buffer_state[bufnr('%')] = 0 | LlamaDisable
+  " Define unified commands
+  command! -nargs=0 AIEnable call s:AI_Enable()
+  command! -nargs=0 AIDisable call s:AI_Disable()
+  command! -nargs=0 AIChange call s:AI_Change()
+endfunction
+
+" ============================================================================
+" Deprecated - Kept for compatibility
+" ============================================================================
+function! Vide_AI_Copilot()
+  call s:Load_Copilot_plugin()
+endfunction
+
+function! Vide_AI_LlamaVim()
+  call s:Load_Llama_plugin()
 endfunction
 
 " ============================================================================
@@ -304,84 +363,113 @@ function! s:Start_llama_server()
   endif
 endfunction
 
-function! s:Setup_AI_buffer_control(ai_type)
-  if a:ai_type == 'copilot'
-    let g:copilot_buffer_state = {}
-    augroup copilot_buffer
-      autocmd!
-      autocmd BufReadPost * call Copilot_Control()
-      autocmd BufEnter * call Copilot_Control()
-    augroup END
-  elseif a:ai_type == 'llama'
-    let g:llama_buffer_state = {}
-    augroup llama_buffer
-      autocmd!
-      autocmd BufReadPost * call Llama_Control()
-      autocmd BufEnter * call Llama_Control()
-    augroup END
-  endif
-endfunction
-
-" ============================================================================
-" AI Buffer Control Functions
-" ============================================================================
-function! Copilot_Control()
-  if !has_key(g:copilot_buffer_state, bufnr('%'))
-    let g:copilot_buffer_state[bufnr('%')] = 0
+function! s:Get_buffer_AI_type(bufnr)
+  if !exists('g:vide_buffer_ai_type')
+    let g:vide_buffer_ai_type = {}
   endif
   
-  if get(g:copilot_buffer_state, bufnr('%'), 0) == 1
-    Copilot enable
+  " Return buffer-specific AI type, or default to global setting
+  if has_key(g:vide_buffer_ai_type, a:bufnr)
+    return g:vide_buffer_ai_type[a:bufnr]
   else
-    Copilot disable
-  endif
-endfunction
-
-function! Llama_Control()
-  if !has_key(g:llama_buffer_state, bufnr('%'))
-    let g:llama_buffer_state[bufnr('%')] = 0
-  endif
-  
-  if get(g:llama_buffer_state, bufnr('%'), 0) == 1
-    LlamaEnable
-  else
-    LlamaDisable
-  endif
-endfunction
-
-" ============================================================================
-" AI Switching
-" ============================================================================
-function! s:Cleanup_current_AI()
-  " Cleanup based on current AI selection
-  if exists('g:ide_ai')
-    if g:ide_ai == 2
-      " Cleanup Copilot
-      if exists('g:copilot_buffer_state')
-        silent! Copilot disable
-        augroup copilot_buffer
-          autocmd!
-        augroup END
-        silent! delcommand AIEnable
-        silent! delcommand AIDisable
-      endif
-    elseif g:ide_ai == 3
-      " Cleanup Llama.vim
-      if exists('g:llama_buffer_state')
-        silent! LlamaDisable
-        augroup llama_buffer
-          autocmd!
-        augroup END
-        silent! delcommand AIEnable
-        silent! delcommand AIDisable
-      endif
+    " Set default based on global ide_ai
+    if exists('g:ide_ai')
+      let g:vide_buffer_ai_type[a:bufnr] = g:ide_ai
+      return g:ide_ai
+    else
+      let g:vide_buffer_ai_type[a:bufnr] = 1  " no AI
+      return 1
     endif
   endif
 endfunction
 
-function! AIChange()
+function! s:Get_buffer_AI_state(bufnr)
+  if !exists('g:vide_buffer_ai_state')
+    let g:vide_buffer_ai_state = {}
+  endif
+  
+  " Return buffer-specific AI state (0=disabled, 1=enabled)
+  return get(g:vide_buffer_ai_state, a:bufnr, 0)
+endfunction
+
+function! s:Set_buffer_AI_type(bufnr, ai_type)
+  if !exists('g:vide_buffer_ai_type')
+    let g:vide_buffer_ai_type = {}
+  endif
+  let g:vide_buffer_ai_type[a:bufnr] = a:ai_type
+endfunction
+
+function! s:Set_buffer_AI_state(bufnr, state)
+  if !exists('g:vide_buffer_ai_state')
+    let g:vide_buffer_ai_state = {}
+  endif
+  let g:vide_buffer_ai_state[a:bufnr] = a:state
+endfunction
+
+" ============================================================================
+" Unified AI Buffer Control
+" ============================================================================
+function! s:AI_Buffer_Control()
+  let l:bufnr = bufnr('%')
+  let l:ai_type = s:Get_buffer_AI_type(l:bufnr)
+  let l:ai_state = s:Get_buffer_AI_state(l:bufnr)
+  
+  " Control Copilot
+  if l:ai_type == 2 && l:ai_state == 1
+    silent! Copilot enable
+  else
+    silent! Copilot disable
+  endif
+  
+  " Control Llama.vim
+  if l:ai_type == 3 && l:ai_state == 1
+    silent! LlamaEnable
+  else
+    silent! LlamaDisable
+  endif
+endfunction
+
+function! s:AI_Enable()
+  let l:bufnr = bufnr('%')
+  let l:ai_type = s:Get_buffer_AI_type(l:bufnr)
+  
+  if l:ai_type == 1
+    echo "No AI selected for this buffer. Use :AIChange to select one."
+    return
+  endif
+  
+  call s:Set_buffer_AI_state(l:bufnr, 1)
+  call s:AI_Buffer_Control()
+  
+  if l:ai_type == 2
+    echo "Copilot enabled in buffer " . l:bufnr
+  elseif l:ai_type == 3
+    echo "Llama.vim enabled in buffer " . l:bufnr
+  endif
+endfunction
+
+function! s:AI_Disable()
+  let l:bufnr = bufnr('%')
+  let l:ai_type = s:Get_buffer_AI_type(l:bufnr)
+  
+  call s:Set_buffer_AI_state(l:bufnr, 0)
+  call s:AI_Buffer_Control()
+  
+  if l:ai_type == 1
+    echo "No AI to disable"
+  elseif l:ai_type == 2
+    echo "Copilot disabled in buffer " . l:bufnr
+  elseif l:ai_type == 3
+    echo "Llama.vim disabled in buffer " . l:bufnr
+  endif
+endfunction
+
+function! s:AI_Change()
+  let l:bufnr = bufnr('%')
+  let l:current_ai = s:Get_buffer_AI_type(l:bufnr)
+  
   " Get user selection
-  let l:choice = confirm('Select AI:', "&no AI\n&copilot\n&llama.vim", get(g:, 'ide_ai', 1))
+  let l:choice = confirm('Select AI for this buffer:', "&no AI\n&copilot\n&llama.vim", l:current_ai)
   
   " Exit if cancelled
   if l:choice == 0
@@ -390,32 +478,57 @@ function! AIChange()
   endif
   
   " Exit if same as current
-  if exists('g:ide_ai') && g:ide_ai == l:choice
-    echo "Already using this AI."
+  if l:choice == l:current_ai
+    echo "Already using this AI in this buffer."
     return
   endif
   
-  " Cleanup current AI
-  call s:Cleanup_current_AI()
+  " Load AI plugin if not already loaded
+  if l:choice == 2
+    call s:Load_AI_plugins('copilot')
+  elseif l:choice == 3
+    call s:Load_AI_plugins('llama')
+  endif
   
-  " Set new AI
-  let g:ide_ai = l:choice
+  " Set new AI type for this buffer
+  call s:Set_buffer_AI_type(l:bufnr, l:choice)
   
-  " Load new AI
-  if g:ide_ai == 1
-    echo "No AI selected"
-  elseif g:ide_ai == 2
-    echo "Switching to Copilot AI ..."
-    call Vide_AI_Copilot()
-    echo "Copilot AI loaded"
-  elseif g:ide_ai == 3
-    echo "Switching to Llama.vim ..."
-    call Vide_AI_LlamaVim()
-    echo "Llama.vim loaded"
+  " Ask if user wants to enable it
+  if l:choice != 1
+    let l:enable = confirm('Enable AI in this buffer?', "&Yes\n&No", 1)
+    if l:enable == 1
+      call s:Set_buffer_AI_state(l:bufnr, 1)
+    else
+      call s:Set_buffer_AI_state(l:bufnr, 0)
+    endif
   else
-    echo "ERROR: Undefined AI selected."
+    call s:Set_buffer_AI_state(l:bufnr, 0)
+  endif
+  
+  " Apply changes
+  call s:AI_Buffer_Control()
+  
+  " Report result
+  if l:choice == 1
+    echo "No AI selected for buffer " . l:bufnr
+  elseif l:choice == 2
+    echo "Switched to Copilot in buffer " . l:bufnr . " (" . (s:Get_buffer_AI_state(l:bufnr) ? "enabled" : "disabled") . ")"
+  elseif l:choice == 3
+    echo "Switched to Llama.vim in buffer " . l:bufnr . " (" . (s:Get_buffer_AI_state(l:bufnr) ? "enabled" : "disabled") . ")"
   endif
 endfunction
 
-" Define the AIChange command
-command! AIChange call AIChange()
+" ============================================================================
+" Deprecated Functions - Kept for compatibility
+" ============================================================================
+function! s:Setup_AI_buffer_control(ai_type)
+  " Deprecated - now handled by unified control
+endfunction
+
+function! Copilot_Control()
+  " Deprecated - now handled by s:AI_Buffer_Control()
+endfunction
+
+function! Llama_Control()
+  " Deprecated - now handled by s:AI_Buffer_Control()
+endfunction
