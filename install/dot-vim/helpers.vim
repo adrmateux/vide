@@ -23,7 +23,19 @@ command! Bdi :call DeleteInactiveBufs()
 
 function! GenerateUMLDiagram()
     let l:save_pos = getpos(".")
-    " TODO: Verify if plantuml and eog are installed
+    " Verify if plantuml and eog are installed
+    if !executable('plantuml')
+        echohl ErrorMsg
+        echo "Error: plantuml is not installed or not in PATH"
+        echohl None
+        return
+    endif
+    if !executable('eog')
+        echohl ErrorMsg
+        echo "Error: eog is not installed or not in PATH"
+        echohl None
+        return
+    endif
     let l:start_line = search('@startuml\s*\(\S\+\)', 'c')
     echo l:start_line
     if l:start_line == 0
@@ -41,7 +53,7 @@ function! GenerateUMLDiagram()
         return
     endif
 
-    let l:end_line = search('@enduml', 'c')
+    let l:end_line = search('@enduml', 'cW')
     if l:end_line == 0
         echo "No end pattern found."
         return
@@ -51,8 +63,9 @@ function! GenerateUMLDiagram()
 
     let l:diag_format = input("Diagram format (png/svg/eps/pdf/vdx/xmi/scxml/html/txt/utxt/latex/latexNP):", "png")
     echo "Diagram format: " . l:diag_format 
+    echo "Generating:" . l:match . '.uml'
 
-    let l:cmd = 'plantuml ' . '-t' . l:diag_format . ' ' . l:match . '.uml'
+    let l:cmd = 'plantuml ' . ' ' . l:match . '.uml' . ' ' . '-t' . l:diag_format 
     let l:cmd2 = 'eog ' . l:match . "." . l:diag_format 
     let l:cmd3 = 'rm ' . l:match . '.uml'
 
