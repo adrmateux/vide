@@ -348,3 +348,74 @@ function! Llama_Control()
     LlamaDisable
   endif
 endfunction
+
+" ============================================================================
+" AI Switching
+" ============================================================================
+function! s:Cleanup_current_AI()
+  " Cleanup based on current AI selection
+  if exists('g:ide_ai')
+    if g:ide_ai == 2
+      " Cleanup Copilot
+      if exists('g:copilot_buffer_state')
+        silent! Copilot disable
+        augroup copilot_buffer
+          autocmd!
+        augroup END
+        silent! delcommand AIEnable
+        silent! delcommand AIDisable
+      endif
+    elseif g:ide_ai == 3
+      " Cleanup Llama.vim
+      if exists('g:llama_buffer_state')
+        silent! LlamaDisable
+        augroup llama_buffer
+          autocmd!
+        augroup END
+        silent! delcommand AIEnable
+        silent! delcommand AIDisable
+      endif
+    endif
+  endif
+endfunction
+
+function! AIChange()
+  " Get user selection
+  let l:choice = confirm('Select AI:', "&no AI\n&copilot\n&llama.vim", get(g:, 'ide_ai', 1))
+  
+  " Exit if cancelled
+  if l:choice == 0
+    echo "AI change cancelled."
+    return
+  endif
+  
+  " Exit if same as current
+  if exists('g:ide_ai') && g:ide_ai == l:choice
+    echo "Already using this AI."
+    return
+  endif
+  
+  " Cleanup current AI
+  call s:Cleanup_current_AI()
+  
+  " Set new AI
+  let g:ide_ai = l:choice
+  
+  " Load new AI
+  if g:ide_ai == 1
+    echo "No AI selected"
+  elseif g:ide_ai == 2
+    echo "Switching to Copilot AI ..."
+    call Vide_AI_Copilot()
+    echo "Copilot AI loaded"
+  elseif g:ide_ai == 3
+    echo "Switching to Llama.vim ..."
+    call Vide_AI_LlamaVim()
+    echo "Llama.vim loaded"
+  else
+    echo "ERROR: Undefined AI selected."
+  endif
+endfunction
+
+" Define the AIChange command
+command! AIChange call AIChange()
