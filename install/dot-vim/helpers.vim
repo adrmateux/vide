@@ -23,6 +23,7 @@ command! Bdi :call DeleteInactiveBufs()
 
 function! GenerateUMLDiagram()
     let l:save_pos = getpos(".")
+    
     " Verify if plantuml and eog are installed
     if !executable('plantuml')
         echohl ErrorMsg
@@ -36,6 +37,7 @@ function! GenerateUMLDiagram()
         echohl None
         return
     endif
+
     let l:start_line = search('@startuml\s*\(\S\+\)', 'c')
     echo l:start_line
     if l:start_line == 0
@@ -59,27 +61,35 @@ function! GenerateUMLDiagram()
         return
     endif
 
-    execute l:start_line . ',' . l:end_line . 'write! ' . l:match . '.uml'
+    " Use /tmp/ directory for temporary files
+    let l:tmp_dir = '/tmp/'
+    let l:uml_file = l:tmp_dir . l:match . '.uml'
+    let l:output_file = l:tmp_dir . l:match
+
+    execute l:start_line . ',' . l:end_line . 'write! ' . l:uml_file
 
     let l:diag_format = input("Diagram format (png/svg/eps/pdf/vdx/xmi/scxml/html/txt/utxt/latex/latexNP):", "png")
     echo "Diagram format: " . l:diag_format 
-    echo "Generating:" . l:match . '.uml'
+    echo "Generating: " . l:output_file . "." . l:diag_format
 
-    let l:cmd = 'plantuml ' . ' ' . l:match . '.uml' . ' ' . '-t' . l:diag_format 
-    let l:cmd2 = 'eog ' . l:match . "." . l:diag_format 
-    let l:cmd3 = 'rm ' . l:match . '.uml'
+    let l:cmd = 'plantuml ' . l:uml_file . ' -t' . l:diag_format 
+    let l:cmd2 = 'eog ' . l:output_file . "." . l:diag_format 
+    let l:cmd3 = 'rm ' . l:uml_file
 
     silent execute '!' . l:cmd
     if l:diag_format == "txt"
-      silent execute 'r!cat ' . l:match . ".a" . l:diag_format
+      silent execute 'r!cat ' . l:output_file . ".a" . l:diag_format
     elseif l:diag_format == "utxt"
-      silent execute '.+1r!cat ' . l:match . "." . l:diag_format
+      silent execute '.+1r!cat ' . l:output_file . "." . l:diag_format
     else
       silent execute '!' . l:cmd2 ."&"
     endif
     silent execute '!' . l:cmd3 
     
     redraw!
+    echohl MoreMsg
+    echo "UML diagram saved to: " . l:output_file . "." . l:diag_format
+    echohl None
     call setpos('.', l:save_pos)
 endfunction
 
