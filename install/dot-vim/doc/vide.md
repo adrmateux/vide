@@ -18,7 +18,9 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 | \<C-i\>n    | Copilot next sugestion   | \<C-i\>w          | Copilot accept word      |
 | \<C-i\>d    | Copilot dismiss suggest  | \<C-y\>           | Completion with coc.nvim |
 | \<C-u\>     | Spell check              | :!ghostwriter % & | Edit % with ghostwriteri |
-| \\rn        | Rename symbol (Coc)      |
+| \\rn        | Rename symbol (Coc)      | :'<,'>w !python3  | Exec. select. in python  |
+| :'<,'>source| Exec. select vim script  |                   |                          |
+| :'<,'>w !g++ -o main -x c++ - ; ./main | Compiles c++ code on the fly and execute it  |
 
 ## Auto-complete
 ### mu-complete

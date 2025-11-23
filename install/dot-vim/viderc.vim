@@ -119,6 +119,20 @@ endfunction
 function! s:Setup_misc_mappings()
   " UML diagram generation (requires plantuml)
   nmap <C-m>z :call GenerateUMLDiagram()<CR>
+  
+  "Execute selected code as python code
+  xnoremap <leader>p :w !python3<cr>
+  
+  "Execute selected code as c++ code
+  xnoremap <leader>c :w !g++ -o main -x c++ - ; ./main<cr>
+
+  "Execute selected code as c++ code
+  xnoremap <leader>s :w !bash<cr>
+
+  "Execute selected code as jshell/java code
+  xnoremap <leader>j :w !jshell -<cr>
+
+
 endfunction
 
 " ============================================================================
