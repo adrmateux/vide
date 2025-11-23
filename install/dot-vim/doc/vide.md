@@ -245,6 +245,76 @@ Press i to go back to terminal input mode.
 ### END OF WORKFLOW SECTION
 
 ## EXTRA STUFF
+
+### Executing code on the fly
+What follow are tested examples of code you can run directly from this document. 
+
+Select the code inside the ``` ```, and use:
+
+- "\s" - for bash shell script
+- "\p" - for python code
+- "\j" - for java code. NOTE: the code will run inside a jshell
+- "\c" - for c++ code.
+
+####  python code count 1 to 10
+```python
+for i in range(1, 11):
+    print(i)
+```
+
+#### bash code count 1 to 10
+```bash
+for i in {1..10}; do
+    echo $i
+done
+```
+
+#### java "Hello World" code
+```java
+public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello");
+    }
+     
+    public void hello() {
+        System.out.println("Hello");
+    }
+}
+
+HelloWorld obj = new HelloWorld();
+
+String[] str = new String[] {"GeeksforGeeks"};
+
+obj.main(str);
+obj.hello();
+```
+
+#### C++ code 
+```cpp
+#include <iostream>
+using namespace std;
+
+class A{
+    int a;
+    std::string b;
+    public:
+    A(int a, std::string b){
+        this->a = a;
+        this->b = b;
+    }
+    void print(){
+        cout << a << " " << b << endl;
+    }
+};
+
+int main() {
+  A a{1,"Hello World"};   
+  a.print();
+  return 0;
+}
+```
+
+
 ## copy paste
 " + y         - copy to the clipboard register ("+p  type all the simbols)
 
