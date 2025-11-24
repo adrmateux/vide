@@ -21,6 +21,7 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 | \\rn        | Rename symbol (Coc)      | :'<,'>w !python3  | Exec. select. in python  |
 | :'<,'>source| Exec. select vim script  |                   |                          |
 | :'<,'>w !g++ -o main -x c++ - ; ./main | Compiles c++ code on the fly and execute it  |
+| <C-o>v      | visual model while ins.  | <C-o><C-v>        | visual block while ins.  |
 
 ## Auto-complete
 ### mu-complete
@@ -28,6 +29,14 @@ In order to use mu-complete type:
 ```
 :packadd vim-mucomplete
 ```
+
+## Auto-complete
+### mu-complete
+In order to use mu-complete type:
+```
+:packadd vim-mucomplete
+```
+
 
 ## Installation
 ### Pre-reqs
