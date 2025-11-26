@@ -33,6 +33,26 @@ endfunction
 command! Bdi :call DeleteInactiveBufs()
 
 " ============================================================================
+" Misc Functions
+" ============================================================================
+
+" Toggle mouse activate
+function! ToggleMouse()
+    " check if mouse is enabled
+    if &mouse == 'a'
+        " disable mouse
+        set mouse=
+        echo "Mouse off"
+    else
+        " enable mouse everywhere
+        set mouse=a
+        echo "Mouse on"
+    endif
+endfunc
+
+nmap <C-m>o :call ToggleMouse()<CR>
+
+" ============================================================================
 " UML Diagram Generation
 " ============================================================================
 

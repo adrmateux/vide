@@ -47,24 +47,6 @@ colorscheme slate
 set ignorecase
 set smartcase
 
-" spell checker aspell
-nmap <C-u> :w!<CR>:!aspell check %<CR>:e! %<CR>
-
-" Toggle mouse activate
-function! ToggleMouse()
-    " check if mouse is enabled
-    if &mouse == 'a'
-        " disable mouse
-        set mouse=
-        echo "Mouse off"
-    else
-        " enable mouse everywhere
-        set mouse=a
-        echo "Mouse on"
-    endif
-endfunc
-nmap <C-m>o :call ToggleMouse()<CR>
-
 "The split is bellow the current viewport
 set splitbelow
 
@@ -105,21 +87,7 @@ set expandtab
 " , but adds 2 lines to ex cmdline 
 set cmdheight=2
 
-" Vimgrep/make errors navigation
-nmap cn :cnext <CR>
-nmap cp :cprevious <CR>
-nmap co :copen <CR>
-nmap cc :cclose <CR>
-
-" 
-nmap bn :bnext<CR>
-nmap bp :bprevious<CR>
-
 " Usefull mappings
 " Write and delete buffer
 " NOTE: Don't capitalize the first letter -> E183: User defined commands must start with an uppercase letter
 :command Wbd :w|bd
-
-" Selection in insert mode
-:inoremap <c-s><left> <esc>vb
-:inoremap <c-s><right> <esc>ve

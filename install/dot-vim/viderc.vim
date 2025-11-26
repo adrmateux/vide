@@ -93,6 +93,17 @@ function! s:Setup_misc_mappings()
   
   " Show keyboard shortcuts in popup window
   nmap <C-F1> :call ShowShortcutsPopup()<CR>
+
+
+  " Vimgrep/make errors navigation
+  nmap cn :cnext <CR>
+  nmap cp :cprevious <CR>
+  nmap co :copen <CR>
+  nmap cc :cclose <CR>
+
+  " spell checker aspell
+  nmap <C-u> :w!<CR>:!aspell check %<CR>:e! %<CR>
+
 endfunction
 
 " ============================================================================
