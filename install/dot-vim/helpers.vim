@@ -152,8 +152,10 @@ function! s:Generate_diagram(diagram_info)
     silent execute '!' . l:cmd
     
     " Handle output based on format
-    if l:format == "txt" || l:format == "utxt"
-        " Insert text diagram into buffer
+    if l:format == "txt"
+        " When plantuml generates "txt" it will create a ".atxt" file
+        silent execute 'r!cat ' . shellescape(l:output_file . '.a' . l:format)
+    elseif l:format == "utxt"
         silent execute 'r!cat ' . shellescape(l:output_file . '.' . l:format)
     else
         " Open graphical diagram in viewer
