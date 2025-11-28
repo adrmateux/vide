@@ -24,25 +24,21 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 | | <C-o>v            | visual model while ins.  | | <C-o><C-v>        | visual block while ins.  |
 | | <C-n>             | autocomplete ins. mode   | | <C-x><C-f>        | Autocomplete filename    |
 |n| *                 | search word after cursor |n| #                 | back search after cursos |
+|n| <C-r><C-w>        | Copy/paste word in :ex   | |                   |                          |
 
 ## Auto-complete
-
 ### Native - ins-completion
 You can find detailed information about autocompletion directly in Vim using its built-in help system. Here are the steps:
 
 ### **1. Use `:help` Command**
-
 In Vim, type:
-
     :help ins-completion
 
 This opens the section about **Insert mode completion**, which covers:
-
 *   `Ctrl-n` / `Ctrl-p` for word completion
 *   `Ctrl-x` followed by other keys for specialized completions (file names, tags, omni, etc.)
 
 ### **2. Specific Topics**
-
 *   **Omni completion**:
         :help compl-omni
 *   **Keyword completion**:
@@ -53,13 +49,10 @@ This opens the section about **Insert mode completion**, which covers:
         :help complete
 
 ### **3. Explore Related Help**
-
 You can search help topics with:
     :help completion
-
 or
     :helpgrep completion
-
 Then navigate results with `:cnext` and `:cprev`.
 
 
@@ -80,15 +73,6 @@ Then navigate results with `:cnext` and `:cprev`.
 | **Keyword (current & included files)** | `Ctrl-x Ctrl-i`     | Complete keywords from included files              |
 
 ***
-
-✅ **Tip:** To see this in Vim, use:
-
-    :help ins-completion
-
-***
-
-Do you want me to **also include a short explanation of when to use each type** (e.g., Omni for programming, dictionary for writing)? Or should I make a **printable cheat sheet** for you?
-
 
 Here’s the **quick reference table with short explanations for when to use each completion type**:
 
@@ -112,8 +96,6 @@ Here’s the **quick reference table with short explanations for when to use eac
 ✅ For writing, **dictionary** and **thesaurus** completions are helpful.
 
 ***
-
-Do you want me to **turn this into a nicely formatted printable cheat sheet (PDF)** or **a Vim config snippet that enables the most useful completions automatically**?
 
 ### mu-complete
 In order to use mu-complete type:
