@@ -164,6 +164,7 @@ function! s:Setup_misc_mappings()
   xnoremap <leader>p :w !python3<cr>
   
   "Execute selected code as c++ code - after select type "\c"
+  inoremap <C-b>c <C-o>:execute ':w !g++ -o ' . expand("%:t:r") . ' -x c++ - ; ./' . expand("%:t:r")<CR>
   xnoremap <leader>c :w !g++ -o main -x c++ - ; ./main<cr>
 
   "Execute selected code as bash code - after select type "\s"
