@@ -7,36 +7,119 @@ vss/vss1            - vs file explorer
 vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi commands. To quit it press "q" followed by enter.
 
 ## Top 100  shortcuts/command
-| Com./Shor.        | Description              | Com./Shor.        | Description              |
-|-------------------|--------------------------|-------------------|--------------------------|
-| :Wbd              | write and close buff     | :h digraph        | show special char's list |
-| :.w !!            | execute line in shell    | :.w !bash         | execute line in shell    |
-| :g/text:          | create filtered view     | :verb map         | debug key equence        |
-|  yy:@"            | exec current line on ex  | \<C-m\>o          | mouse toggle on/off      |
-|  kk/ko            | vss open/close tab on vs | \<C-w\>{<C-W>z    | open/close prev.wind.tag |
-| \<C-m\>z          | plantuml diagram gen.    | \<C-i\>s          | Copilot suggest          |
-| \<C-i\>n          | Copilot next sugestion   | \<C-i\>w          | Copilot accept word      |
-| \<C-i\>d          | Copilot dismiss suggest  | \<C-y\>           | Completion with coc.nvim |
-| \<C-u\>           | Spell check              | :!ghostwriter % & | Edit % with ghostwriteri |
-| \\rn              | Rename symbol (Coc)      | :'<,'>w !python3  | Exec. select. in python  |
-| :'<,'>source      | Exec. select vim script  |                   |                          |
-| :'<,'>w !g++ -o main -x c++ - ; ./main       | Compiles c++ code on the fly and execute it  |
-| <C-o>v            | visual model while ins.  | <C-o><C-v>        | visual block while ins.  |
+|M| Com./Shor.        | Description              |M| Com./Shor.        | Description              |
+|-|-------------------|--------------------------|-|-------------------|--------------------------|
+| | :Wbd              | write and close buff     | | :h digraph        | show special char's list |
+| | :.w !!            | execute line in shell    | | :.w !bash         | execute line in shell    |
+| | :g/text:          | create filtered view     | | :verb map         | debug key equence        |
+| |  yy:@"            | exec current line on ex  | | \<C-m\>o          | mouse toggle on/off      |
+| |  kk/ko            | vss open/close tab on vs | | \<C-w\>{<C-W>z    | open/close prev.wind.tag |
+| | \<C-m\>z          | plantuml diagram gen.    | | \<C-i\>s          | Copilot suggest          |
+| | \<C-i\>n          | Copilot next sugestion   | | \<C-i\>w          | Copilot accept word      |
+| | \<C-i\>d          | Copilot dismiss suggest  | | \<C-y\>           | Completion with coc.nvim |
+| | \<C-u\>           | Spell check              | | :!ghostwriter % & | Edit % with ghostwriteri |
+| | \\rn              | Rename symbol (Coc)      | | :'<,'>w !python3  | Exec. select. in python  |
+| | :'<,'>source      | Exec. select vim script  | |                   |                          |
+| | :'<,'>w !g++ -o main -x c++ - ; ./main       | | Compiles c++ code on the fly and execute it  |
+| | <C-o>v            | visual model while ins.  | | <C-o><C-v>        | visual block while ins.  |
+| | <C-n>             | autocomplete ins. mode   | | <C-x><C-f>        | Autocomplete filename    |
+|n| *                 | search word after cursor |n| #                 | back search after cursos |
 
 ## Auto-complete
+
+### Native - ins-completion
+You can find detailed information about autocompletion directly in Vim using its built-in help system. Here are the steps:
+
+### **1. Use `:help` Command**
+
+In Vim, type:
+
+    :help ins-completion
+
+This opens the section about **Insert mode completion**, which covers:
+
+*   `Ctrl-n` / `Ctrl-p` for word completion
+*   `Ctrl-x` followed by other keys for specialized completions (file names, tags, omni, etc.)
+
+### **2. Specific Topics**
+
+*   **Omni completion**:
+        :help compl-omni
+*   **Keyword completion**:
+        :help compl-keyword
+*   **File name completion**:
+        :help compl-filename
+*   **General overview**:
+        :help complete
+
+### **3. Explore Related Help**
+
+You can search help topics with:
+    :help completion
+
+or
+    :helpgrep completion
+
+Then navigate results with `:cnext` and `:cprev`.
+
+
+ **quick reference table** of Vim’s built-in completion commands and their key mappings:
+
+| **Completion Type**                    | **Key Mapping**     | **Description**                                    |
+| -------------------------------------- | ------------------- | -------------------------------------------------- |
+| **Keyword (current buffer)**           | `Ctrl-n` / `Ctrl-p` | Complete words from the current buffer             |
+| **Whole lines**                        | `Ctrl-x Ctrl-l`     | Complete entire lines                              |
+| **File names**                         | `Ctrl-x Ctrl-f`     | Complete file names                                |
+| **Dictionary**                         | `Ctrl-x Ctrl-k`     | Complete from dictionary specified by `dictionary` |
+| **Thesaurus**                          | `Ctrl-x Ctrl-t`     | Complete from thesaurus specified by `thesaurus`   |
+| **Tags**                               | `Ctrl-x Ctrl-]`     | Complete from tags                                 |
+| **Omni completion**                    | `Ctrl-x Ctrl-o`     | Language-aware completion (requires `omnifunc`)    |
+| **Spelling suggestions**               | `Ctrl-x s`          | Complete spelling suggestions                      |
+| **User-defined**                       | `Ctrl-x Ctrl-u`     | Complete using `completefunc`                      |
+| **Keyword (other buffers)**            | `Ctrl-x Ctrl-n`     | Complete keywords from other loaded buffers        |
+| **Keyword (current & included files)** | `Ctrl-x Ctrl-i`     | Complete keywords from included files              |
+
+***
+
+✅ **Tip:** To see this in Vim, use:
+
+    :help ins-completion
+
+***
+
+Do you want me to **also include a short explanation of when to use each type** (e.g., Omni for programming, dictionary for writing)? Or should I make a **printable cheat sheet** for you?
+
+
+Here’s the **quick reference table with short explanations for when to use each completion type**:
+
+| **Completion Type**                    | **Key Mapping**     | **When to Use**                                                                                     |
+| -------------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------- |
+| **Keyword (current buffer)**           | `Ctrl-n` / `Ctrl-p` | When you want to complete words already typed in the current file. Great for quick text completion. |
+| **Whole lines**                        | `Ctrl-x Ctrl-l`     | When repeating entire lines from the buffer (useful for boilerplate or repetitive code).            |
+| **File names**                         | `Ctrl-x Ctrl-f`     | When typing paths or filenames (e.g., in `:edit`, `include`, or config files).                      |
+| **Dictionary**                         | `Ctrl-x Ctrl-k`     | When writing prose or documentation and need words from a dictionary file.                          |
+| **Thesaurus**                          | `Ctrl-x Ctrl-t`     | When you want synonyms or alternative words (requires a thesaurus file).                            |
+| **Tags**                               | `Ctrl-x Ctrl-]`     | When navigating code using tags (e.g., functions, classes defined in `ctags`).                      |
+| **Omni completion**                    | `Ctrl-x Ctrl-o`     | When coding in a specific language and need context-aware suggestions (requires `omnifunc` or LSP). |
+| **Spelling suggestions**               | `Ctrl-x s`          | When correcting spelling mistakes in text or comments.                                              |
+| **User-defined**                       | `Ctrl-x Ctrl-u`     | When you have a custom completion function for special cases.                                       |
+| **Keyword (other buffers)**            | `Ctrl-x Ctrl-n`     | When you need words from other open buffers (useful in multi-file projects).                        |
+| **Keyword (current & included files)** | `Ctrl-x Ctrl-i`     | When you want words from the current file and files included via `#include` or similar.             |
+
+***
+
+✅ **Tip:** For programming, **Omni completion** or **LSP-based plugins** (like `coc.nvim` or `nvim-cmp`) are the most powerful.  
+✅ For writing, **dictionary** and **thesaurus** completions are helpful.
+
+***
+
+Do you want me to **turn this into a nicely formatted printable cheat sheet (PDF)** or **a Vim config snippet that enables the most useful completions automatically**?
+
 ### mu-complete
 In order to use mu-complete type:
 ```
 :packadd vim-mucomplete
 ```
-
-## Auto-complete
-### mu-complete
-In order to use mu-complete type:
-```
-:packadd vim-mucomplete
-```
-
 
 ## Installation
 ### Pre-reqs
@@ -465,9 +548,6 @@ https://www.vim.org/scripts/script.php?script_id=2368
 https://github.com/hari-rangarajan/CCTree/blob/master/doc/CCTree.txt
 https://stackoverflow.com/questions/563616/vim-and-ctags-tips-and-tricks
 
-## VI embedded dictionaries and autocomplete
-Search for vi help
-:help ins-completion
 
 # TODO: Manage the following section, but not the annexes
 # CHANGES - IMPORTANT!!!!
