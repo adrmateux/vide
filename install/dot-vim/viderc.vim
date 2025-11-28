@@ -318,6 +318,7 @@ endfunction
 
 
 function! Netrw_server()
+  call s:Setup_core_editor_settings()
   " Open files on a specific servername, tab 1, window 1
   let g:netrw_servername = $VI_SERVER
   let g:netrw_browse_split = [$VI_SERVER, 1, 1]

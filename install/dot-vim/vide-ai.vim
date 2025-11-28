@@ -107,6 +107,11 @@ function! s:Setup_unified_AI_control()
   command! -nargs=0 AIEnable call s:AI_Enable()
   command! -nargs=0 AIDisable call s:AI_Disable()
   command! -nargs=0 AIChange call s:AI_Change()
+
+  " Map enable and disable actions
+  inoremap <C-a>e <C-o>:AIEnable<CR>
+  inoremap <C-a>d <C-o>:AIDisable<CR>
+
 endfunction
 
 " ============================================================================

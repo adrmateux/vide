@@ -9,20 +9,20 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 ## Top 100  shortcuts/command
 |M| Com./Shor.        | Description              |M| Com./Shor.        | Description              |
 |-|-------------------|--------------------------|-|-------------------|--------------------------|
-| | :Wbd              | write and close buff     | | :h digraph        | show special char's list |
-| | :.w !!            | execute line in shell    | | :.w !bash         | execute line in shell    |
-| | :g/text:          | create filtered view     | | :verb map         | debug key equence        |
-| |  yy:@"            | exec current line on ex  | | \<C-m\>o          | mouse toggle on/off      |
-| |  kk/ko            | vss open/close tab on vs | | \<C-w\>{<C-W>z    | open/close prev.wind.tag |
-| | \<C-m\>z          | plantuml diagram gen.    | | \<C-i\>s          | Copilot suggest          |
-| | \<C-i\>n          | Copilot next sugestion   | | \<C-i\>w          | Copilot accept word      |
-| | \<C-i\>d          | Copilot dismiss suggest  | | \<C-y\>           | Completion with coc.nvim |
-| | \<C-u\>           | Spell check              | | :!ghostwriter % & | Edit % with ghostwriteri |
-| | \\rn              | Rename symbol (Coc)      | | :'<,'>w !python3  | Exec. select. in python  |
-| | :'<,'>source      | Exec. select vim script  | |                   |                          |
-| | :'<,'>w !g++ -o main -x c++ - ; ./main       | | Compiles c++ code on the fly and execute it  |
-| | <C-o>v            | visual model while ins.  | | <C-o><C-v>        | visual block while ins.  |
-| | <C-n>             | autocomplete ins. mode   | | <C-x><C-f>        | Autocomplete filename    |
+|n| :Wbd              | write and close buff     |n| :h digraph        | show special char's list |
+|n| :.w !!            | execute line in shell    |n| :.w !bash         | execute line in shell    |
+|n| :g/text:          | create filtered view     |n| :verb map         | debug key equence        |
+|n|  yy:@"            | exec current line on ex  |n| \<C-m\>o          | mouse toggle on/off      |
+|n|  kk/ko            | vss open/close tab on vs |n| \<C-w\>{<C-W>z    | open/close prev.wind.tag |
+|n| \<C-m\>z          | plantuml diagram gen.    |i| \<C-i\>s          | Copilot suggest          |
+|n| \<C-i\>n          | Copilot next sugestion   |i| \<C-i\>w          | Copilot accept word      |
+|n| \<C-i\>d          | Copilot dismiss suggest  |i| \<C-y\>           | Completion with coc.nvim |
+|n| \<C-u\>           | Spell check              |n| :!ghostwriter % & | Edit % with ghostwriteri |
+|n| \\rn              | Rename symbol (Coc)      |n| :'<,'>w !python3  | Exec. select. in python  |
+|n| :'<,'>source      | Exec. select vim script  | |                   |                          |
+|n| :'<,'>w !g++ -o main -x c++ - ; ./main       ||| Compiles c++ code on the fly and execute it  |
+|i| <C-o>v            | visual model while ins.  |i| <C-o><C-v>        | visual block while ins.  |
+|i| <C-n>             | autocomplete ins. mode   |i| <C-x><C-f>        | Autocomplete filename    |
 |n| *                 | search word after cursor |n| #                 | back search after cursos |
 |n| <C-r><C-w>        | Copy/paste word in :ex   | |                   |                          |
 
