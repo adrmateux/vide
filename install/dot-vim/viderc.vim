@@ -175,6 +175,9 @@ function! s:Setup_misc_mappings()
   "Execute selected code as jshell/java code - after select type "\j"
   xnoremap <leader>j :w !jshell -<cr>
   
+  "Execute markdown code snippet - after select type "\e"
+  xnoremap <leader>e :call ExecuteMarkdownSnippet()<cr>
+  
   " Show keyboard shortcuts in popup window
   nmap <C-F1> :call ShowShortcutsPopup()<CR>
 
@@ -203,7 +206,7 @@ function! Aspell_check()
   
   " Prompt user to select language
   let l:choice = confirm('Select spell check language:', 
-        \ "&English (en)\n&Spanish (es)\n&French (fr)\n&German (de)\n&Italian (it)\n&Portuguese (pt)\nOther (c&ustom)", 
+        \ "&English (en)\n&Spanish (es)\n&French (fr)\n&German (de)\n&Italian (it)\n&Portuguese BR (pt)\nOther (c&ustom)", 
         \ 1)
   
   if l:choice == 0
@@ -220,7 +223,7 @@ function! Aspell_check()
   elseif l:choice == 5
     let g:aspell_lang = 'it'
   elseif l:choice == 6
-    let g:aspell_lang = 'pt'
+    let g:aspell_lang = 'pt_BR'
   elseif l:choice == 7
     " Custom language code
     let l:lang = input('Enter language code (e.g., en, es, fr): ')
@@ -237,6 +240,68 @@ function! Aspell_check()
   execute ':e! %'
   
   echo "Spell check completed with language: " . g:aspell_lang
+endfunction
+
+" ============================================================================
+" Execute Markdown Code Snippet
+" ============================================================================
+function! ExecuteMarkdownSnippet() range
+  " Get the selected lines
+  let l:lines = getline(a:firstline, a:lastline)
+  
+  " Check if first line contains language specification
+  if l:lines[0] !~ '^```\w\+'
+    echo "Error: Selection must start with ```<language>"
+    return
+  endif
+  
+  " Extract language from first line
+  let l:lang = substitute(l:lines[0], '^```\(\w\+\).*', '\1', '')
+  
+  " Remove first line (```) and last line (```) if present
+  let l:code_lines = l:lines[1:]
+  if len(l:code_lines) > 0 && l:code_lines[-1] =~ '^```\s*$'
+    let l:code_lines = l:code_lines[:-2]
+  endif
+  
+  " Determine command based on language
+  let l:cmd = ''
+  if l:lang ==# 'python' || l:lang ==# 'python3' || l:lang ==# 'py'
+    let l:cmd = 'python3'
+  elseif l:lang ==# 'bash' || l:lang ==# 'sh' || l:lang ==# 'shell'
+    let l:cmd = 'bash'
+  elseif l:lang ==# 'c++' || l:lang ==# 'cpp' || l:lang ==# 'c'
+    let l:cmd = 'g++ -o /tmp/mdsnippet -x c++ - && /tmp/mdsnippet'
+  elseif l:lang ==# 'java'
+    let l:cmd = 'jshell -'
+  elseif l:lang ==# 'javascript' || l:lang ==# 'js'
+    let l:cmd = 'node'
+  elseif l:lang ==# 'ruby' || l:lang ==# 'rb'
+    let l:cmd = 'ruby'
+  elseif l:lang ==# 'perl' || l:lang ==# 'pl'
+    let l:cmd = 'perl'
+  elseif l:lang ==# 'php'
+    let l:cmd = 'php'
+  elseif l:lang ==# 'rust' || l:lang ==# 'rs'
+    let l:cmd = 'rustc - -o /tmp/mdsnippet && /tmp/mdsnippet'
+  elseif l:lang ==# 'go'
+    let l:cmd = 'go run'
+  else
+    echo "Error: Unsupported language '" . l:lang . "'"
+    echo "Supported: python, bash, c++, java, javascript, ruby, perl, php, rust, go"
+    return
+  endif
+  
+  " Create a temporary file with just the code (without backticks)
+  let l:tmpfile = tempname()
+  call writefile(l:code_lines, l:tmpfile)
+  
+  " Execute the code from the temporary file
+  echo "Executing " . l:lang . " code..."
+  execute '!cat ' . l:tmpfile . ' | ' . l:cmd
+  
+  " Clean up temporary file
+  call delete(l:tmpfile)
 endfunction
 
 " ============================================================================

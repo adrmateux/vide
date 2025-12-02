@@ -508,6 +508,13 @@ It used the file .clang_complete
 See pack/completion/start/clang_complete/README.md
 
 ### Using spelling correction <C-u>
+Pressing <C-u>, choose the language and follow the instructions. If you select custom language, you shall enter a valid language. 
+The list of available languages can be found by issuing the following command:
+
+```shell
+aspell dicts
+```
+
 *** DEPRECATED: This section shall remain because the actual way of doing spell checking is hardcoded for facility, but it is not that flexible. ***
 
 In order to use the aspell for english/french/spanish:
