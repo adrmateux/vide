@@ -177,7 +177,7 @@ You can create UML diagrams with help from plantuml
 
 As an example you can put the cursor just before the @startuml bellow
 ```
-@startuml diag_name
+@startuml 
 wlm -> wld : s_initiateWPS
 wld -> wld : hello_3
 @enduml
@@ -382,7 +382,7 @@ class A{
 };
 
 int main() {
-  A a{1,"Hello World"};   
+  A a{1,"Hello Fabian"};   
   a.print();
   return 0;
 }

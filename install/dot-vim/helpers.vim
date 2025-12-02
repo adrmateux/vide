@@ -154,6 +154,13 @@ function! s:Generate_diagram(diagram_info)
     " Write diagram content to temporary file
     execute a:diagram_info.start_line . ',' . a:diagram_info.end_line . 'write! ' . l:uml_file
     
+    " Debug: Show what was written
+    echo "Written lines " . a:diagram_info.start_line . " to " . a:diagram_info.end_line
+    echo "File content:"
+    for l:line in readfile(l:uml_file)
+        echo l:line
+    endfor
+    
     " Get desired output format
     let l:format = input("Diagram format (png/svg/eps/pdf/txt/utxt): ", "png")
     
@@ -168,8 +175,22 @@ function! s:Generate_diagram(diagram_info)
     echo "\nGenerating: " . l:output_file . "." . l:format
     
     " Generate diagram with PlantUML
-    let l:cmd = 'plantuml ' . shellescape(l:uml_file) . ' -t' . l:format . ' -o ' . shellescape(l:tmp_dir)
-    silent execute '!' . l:cmd
+    let l:cmd = 'plantuml -t' . l:format . ' ' . shellescape(l:uml_file)
+    echom "Running command: " . l:cmd
+    let l:plantuml_output = system(l:cmd)
+    
+    " Check if output file was created
+    " Note: txt format creates .atxt files
+    let l:actual_format = (l:format == 'txt') ? 'atxt' : l:format
+    let l:output_path = l:output_file . '.' . l:actual_format
+    if !filereadable(l:output_path)
+        echohl ErrorMsg
+        echo "Error: Output file not created: " . l:output_path
+        echo "PlantUML output: " . l:plantuml_output
+        echohl None
+        call delete(l:uml_file)
+        return
+    endif
     
     " Handle output based on format
     if l:format == "txt"
