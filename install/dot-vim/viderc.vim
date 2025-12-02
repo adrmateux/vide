@@ -163,8 +163,10 @@ function! s:Setup_misc_mappings()
   "Execute selected code as python code - after select type "\p"
   xnoremap <leader>p :w !python3<cr>
   
-  "Execute selected code as c++ code - after select type "\c"
+  "Compile c++ code as you create it by typing  "<C-b><C-o>"
   inoremap <C-b>c <C-o>:execute ':w !g++ -o ' . expand("%:t:r") . ' -x c++ - ; ./' . expand("%:t:r")<CR>
+  
+  "Execute selected code as c++ code - after select type "\c"
   xnoremap <leader>c :w !g++ -o main -x c++ - ; ./main<cr>
 
   "Execute selected code as bash code - after select type "\s"
@@ -182,12 +184,59 @@ function! s:Setup_misc_mappings()
   nmap co :copen <CR>
   nmap cc :cclose <CR>
 
-  " spell checker aspell
-  nmap <C-u> :w!<CR>:!aspell check %<CR>:e! %<CR>
+  " spell checker aspell - with language selection
+  nmap <C-u> :call Aspell_check()<CR>
 
   "map 2 consecutive "j" as an <ESC> while editing/insert/append
   :imap jj <ESC> 
 
+endfunction
+
+" ============================================================================
+" Spell Checking
+" ============================================================================
+function! Aspell_check()
+  " Initialize language variable if not set
+  if !exists('g:aspell_lang')
+    let g:aspell_lang = 'en'
+  endif
+  
+  " Prompt user to select language
+  let l:choice = confirm('Select spell check language:', 
+        \ "&English (en)\n&Spanish (es)\n&French (fr)\n&German (de)\n&Italian (it)\n&Portuguese (pt)\nOther (c&ustom)", 
+        \ 1)
+  
+  if l:choice == 0
+    echo "Spell check cancelled."
+    return
+  elseif l:choice == 1
+    let g:aspell_lang = 'en'
+  elseif l:choice == 2
+    let g:aspell_lang = 'es'
+  elseif l:choice == 3
+    let g:aspell_lang = 'fr'
+  elseif l:choice == 4
+    let g:aspell_lang = 'de'
+  elseif l:choice == 5
+    let g:aspell_lang = 'it'
+  elseif l:choice == 6
+    let g:aspell_lang = 'pt'
+  elseif l:choice == 7
+    " Custom language code
+    let l:lang = input('Enter language code (e.g., en, es, fr): ')
+    if empty(l:lang)
+      echo "Spell check cancelled."
+      return
+    endif
+    let g:aspell_lang = l:lang
+  endif
+  
+  " Run aspell with selected language
+  execute ':w!'
+  execute ':!aspell --lang=' . g:aspell_lang . ' check %'
+  execute ':e! %'
+  
+  echo "Spell check completed with language: " . g:aspell_lang
 endfunction
 
 " ============================================================================

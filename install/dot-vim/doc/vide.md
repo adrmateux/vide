@@ -508,6 +508,8 @@ It used the file .clang_complete
 See pack/completion/start/clang_complete/README.md
 
 ### Using spelling correction <C-u>
+*** DEPRECATED: This section shall remain because the actual way of doing spell checking is hardcoded for facility, but it is not that flexible. ***
+
 In order to use the aspell for english/french/spanish:
 ```
 :let $LC_MESSAGES = "fr"
