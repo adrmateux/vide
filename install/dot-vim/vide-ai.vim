@@ -33,9 +33,11 @@ function! Select_and_load_AI()
     return
   endif
   
-  " Load both AI plugins to allow per-buffer switching
+  " Pre-load the alternative AI plugin (without starting server)
+  " This allows per-buffer switching without delay
   if g:ide_ai == 2
-    call s:Load_AI_plugins('llama')
+    " Don't start llama-server yet, just load the plugin when needed
+    " call s:Load_AI_plugins('llama')
   elseif g:ide_ai == 3
     call s:Load_AI_plugins('copilot')
   endif
@@ -120,10 +122,34 @@ endfunction
 function! s:Start_llama_server()
   let l:check = system('pgrep -x llama-server')
   if empty(l:check)
-    call system('nohup llama-server --fim-qwen-3b-default > /dev/null 2>&1 &')
-    echo "llama-server started."
+    " No server running, prompt for model selection
+    let l:model_choice = confirm('Select Llama model:', 
+          \ "&Qwen2.5-Coder-0.5B (Q8_0)\n&Qwen2.5-Coder-3B (default)\n&Custom command", 
+          \ 1)
+    
+    if l:model_choice == 0
+      echom "llama-server startup cancelled."
+      return
+    elseif l:model_choice == 1
+      " Qwen2.5-Coder-0.5B
+      call system('nohup llama-server --hf-repo ggml-org/Qwen2.5-Coder-0.5B-Q8_0-GGUF --hf-file qwen2.5-coder-0.5b-q8_0.gguf -c 2048 --port 8012 > /dev/null 2>&1 &')
+      echom "llama-server started with Qwen2.5-Coder-0.5B."
+    elseif l:model_choice == 2
+      " Qwen2.5-Coder-3B default
+      call system('nohup llama-server --fim-qwen-3b-default > /dev/null 2>&1 &')
+      echom "llama-server started with Qwen2.5-Coder-3B."
+    elseif l:model_choice == 3
+      " Custom command
+      let l:custom_cmd = input('Enter llama-server command (without nohup/redirect): ', 'llama-server ')
+      if empty(l:custom_cmd)
+        echom "llama-server startup cancelled."
+        return
+      endif
+      call system('nohup ' . l:custom_cmd . ' > /dev/null 2>&1 &')
+      echom "llama-server started with custom command."
+    endif
   else
-    echo "llama-server is already running."
+    echom "llama-server is already running."
   endif
 endfunction
 
