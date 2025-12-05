@@ -450,9 +450,47 @@ endfunction
 " ============================================================================
 " Status Line
 " ============================================================================
+function! StatusLineMode()
+  let l:mode = mode()
+  let l:mode_text = ''
+  if l:mode ==# 'n'
+    let l:mode_text = 'NORMAL'
+  elseif l:mode ==# 'i'
+    let l:mode_text = 'INSERT'
+  elseif l:mode ==# 'R'
+    let l:mode_text = 'REPLACE'
+  elseif l:mode ==# 'v'
+    let l:mode_text = 'VISUAL'
+  elseif l:mode ==# 'V'
+    let l:mode_text = 'V-LINE'
+  elseif l:mode ==# "\<C-V>"
+    let l:mode_text = 'V-BLOCK'
+  elseif l:mode ==# 'c'
+    let l:mode_text = 'COMMAND'
+  elseif l:mode ==# 's'
+    let l:mode_text = 'SELECT'
+  elseif l:mode ==# 'S'
+    let l:mode_text = 'S-LINE'
+  elseif l:mode ==# "\<C-S>"
+    let l:mode_text = 'S-BLOCK'
+  elseif l:mode ==# 't'
+    let l:mode_text = 'TERMINAL'
+  else
+    let l:mode_text = l:mode
+  endif
+  " Add 1 space padding on each side
+  return l:mode_text . ' '
+endfunction
+
 function! StatusLine_settings()
+  " Define highlight group for mode display (white text on dark background)
+  highlight StatusLineMode ctermfg=White ctermbg=DarkGray guifg=White guibg=#3a3a3a
+  
   set laststatus=2
-  set statusline=%t                              " tail of the filename
+  set statusline=%#StatusLineMode#               " switch to mode highlight
+  set statusline+=\ %{StatusLineMode()}          " space + current mode (function adds trailing space)
+  set statusline+=%#StatusLine#                  " switch back to normal statusline
+  set statusline+=\ %t                           " tail of the filename
   set statusline+=[%{strlen(&fenc)?&fenc:'none'} " file encoding
   set statusline+=,%{&ff}]                       " file format
   set statusline+=%h                             " help file flag
