@@ -7,6 +7,7 @@
 source ~/.vim/helpers.vim
 source ~/.vim/vide-ai.vim
 source ~/.vim/vide-help.vim
+source ~/.vim/vide-open-reference-helpers.vim
 
 " ============================================================================
 " Version Information
