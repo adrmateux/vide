@@ -94,7 +94,7 @@ function! s:Setup_core_editor_settings()
 
   " Solves the problem "Press ENTER or type command to continue" when using netrw to open file on a vimserver
   " , but adds 2 lines to ex cmdline 
-  set cmdheight=2
+  set cmdheight=1
 
   " More visibility when autocomplete file names on the :ex command prompt
   " It will show, e.g., the list of all files on a directory, the list of 
