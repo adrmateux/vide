@@ -75,7 +75,7 @@ function! s:Setup_core_editor_settings()
   let g:netrw_chgwin =2 
   let g:netrw_alto = 0 
 
-  "the shell it will open is the zsh
+  "TODO:ROLL BACK ALL USAGE OF ZSH: not safe, not posix, added value can be developed in bash
   set shell=/bin/zsh
 
   " Highlight search
