@@ -23,7 +23,18 @@ vs(){
         printf "\n\nWARNING: No tags or cscope.files found!\n\n"
       fi
     fi
-    vim $DEBUG --servername $VI_SERVER -c "source ~/.vim/viderc.vim" -c ":echo \"Loading VIDE DBs ...\"" -c ":call Start_ide()" -c ":view ~/.vim/doc/vide.md" $NEW_TAB  
+    if command -v screen && [ -z "$NO_SCREEN" ]; then
+       LAUNCH_WITH_SCREEN="screen"
+       SCREEN_ARG_1="-S"
+       SCREEN_ARG_2=$VI_SERVER
+       # For screen to work with vi, without resorting to `set t_ut=` and `redraw!` on normal mode.
+       # ~/.screenrc 
+       # altscreen on
+       # defbce on
+       # set term=screen-256color
+    fi
+    export TERM=xterm-256color
+    $LAUNCH_WITH_SCREEN $SCREEN_ARG_1 $SCREEN_ARG_2 vim $DEBUG --servername $VI_SERVER -c "source ~/.vim/viderc.vim" -c ":echo \"Loading VIDE DBs ...\"" -c ":call Start_ide()" -c ":view ~/.vim/doc/vide.md" $NEW_TAB
   else
     printf "Vim server (VI_SERVER=$VI_SERVER) already running!"
   fi
