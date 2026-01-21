@@ -2,7 +2,7 @@
 
 ## Objective
 
-The aim of this repo is to create a minimun set of vim and shell script that provides the user with a pre-costumized IDE for VIM.
+The aim of this repo is to create a minimun set of vim and shell script that provides users with a pre-costumized IDE for VIM.
 
 The scripts provides integration with other useful repos for AI interaction, code completion and more.
 
