@@ -320,6 +320,29 @@ Press i to go back to terminal input mode.
 
 ## EXTRA STUFF
 
+### Using GNU Screen
+
+Vide launcher, by default, tries to use GNU Screen to launch Vide.
+
+If you want to avoid this behavior, declare the environment variable with any value, e.g., NO_SCREEN=1.
+
+#### Detaching from Vide's GNU Screen
+Ctrl+a+d
+
+#### Create a multisession user
+GNU Screen provides an easy way of sharing the session with other users:
+Press `Ctrl+a+:` and pass the following command:
+```
+:multiuser on 
+:acladd USER
+```
+, where USER shall be any valid user.
+
+To attach to `vide` session, issue the following command:
+```
+screen -x USER/vide
+```
+
 ### Executing code on the fly
 What follow are tested examples of code you can run directly from this document. 
 
