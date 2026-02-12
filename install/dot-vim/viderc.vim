@@ -287,9 +287,13 @@ function! ExecuteMarkdownSnippet() range
     let l:cmd = 'rustc - -o /tmp/mdsnippet && /tmp/mdsnippet'
   elseif l:lang ==# 'go'
     let l:cmd = 'go run'
+  elseif l:lang ==# 'plantuml' || l:lang ==# 'puml' || l:lang ==# 'uml'
+    " Handle PlantUML diagrams
+    call s:ExecuteMarkdownPlantUML(l:code_lines)
+    return
   else
     echo "Error: Unsupported language '" . l:lang . "'"
-    echo "Supported: python, bash, c++, java, javascript, ruby, perl, php, rust, go"
+    echo "Supported: python, bash, c++, java, javascript, ruby, perl, php, rust, go, plantuml"
     return
   endif
   
@@ -303,6 +307,98 @@ function! ExecuteMarkdownSnippet() range
   
   " Clean up temporary file
   call delete(l:tmpfile)
+endfunction
+
+" ============================================================================
+" Execute PlantUML from Markdown Snippet
+" ============================================================================
+function! s:ExecuteMarkdownPlantUML(code_lines)
+  " Verify plantuml is installed
+  if !executable('plantuml')
+    echohl ErrorMsg
+    echo "Error: plantuml is not installed or not in PATH"
+    echohl None
+    return
+  endif
+  
+  if !executable('eog')
+    echohl ErrorMsg
+    echo "Error: eog is not installed or not in PATH"
+    echohl None
+    return
+  endif
+  
+  " Extract diagram name from title if present
+  let l:diagram_name = ''
+  for l:line in a:code_lines
+    let l:title_match = matchstr(l:line, '^\s*title\s\+\zs.\+')
+    if !empty(l:title_match)
+      let l:diagram_name = substitute(l:title_match, '[^a-zA-Z0-9_-]', '_', 'g')
+      break
+    endif
+  endfor
+  
+  " Generate default name if no title found
+  if empty(l:diagram_name)
+    let l:diagram_name = 'markdown_uml_' . strftime('%Y%m%d_%H%M%S')
+  endif
+  
+  let l:tmp_dir = '/tmp/'
+  let l:uml_file = l:tmp_dir . l:diagram_name . '.uml'
+  let l:output_file = l:tmp_dir . l:diagram_name
+  
+  " Write diagram content to temporary file
+  call writefile(a:code_lines, l:uml_file)
+  
+  " Get desired output format
+  let l:format = input("Diagram format (png/svg/eps/pdf/txt/utxt): ", "png")
+  
+  let l:valid_formats = ['png', 'svg', 'eps', 'pdf', 'vdx', 'xmi', 'scxml', 'html', 'txt', 'utxt', 'latex', 'latexNP']
+  if index(l:valid_formats, l:format) == -1
+    echohl ErrorMsg
+    echo "Invalid format: " . l:format
+    echohl None
+    call delete(l:uml_file)
+    return
+  endif
+  
+  echo "\nGenerating: " . l:output_file . "." . l:format
+  
+  " Generate diagram with PlantUML
+  let l:cmd = 'plantuml -t' . l:format . ' ' . shellescape(l:uml_file)
+  let l:plantuml_output = system(l:cmd)
+  
+  " Check if output file was created
+  let l:actual_format = (l:format == 'txt') ? 'atxt' : l:format
+  let l:output_path = l:output_file . '.' . l:actual_format
+  
+  if !filereadable(l:output_path)
+    echohl ErrorMsg
+    echo "Error: Output file not created: " . l:output_path
+    echo "PlantUML output: " . l:plantuml_output
+    echohl None
+    call delete(l:uml_file)
+    return
+  endif
+  
+  " Handle output based on format
+  if l:format == "txt"
+    silent execute 'r!cat ' . shellescape(l:output_file . '.a' . l:format)
+  elseif l:format == "utxt"
+    silent execute 'r!cat ' . shellescape(l:output_file . '.' . l:format)
+  else
+    " Open graphical diagram in viewer
+    let l:viewer_cmd = 'eog ' . shellescape(l:output_file . '.' . l:format) . ' &'
+    silent execute '!' . l:viewer_cmd
+  endif
+  
+  " Cleanup temporary file
+  call delete(l:uml_file)
+  
+  redraw!
+  echohl MoreMsg
+  echo "PlantUML diagram saved to: " . l:output_file . "." . l:format
+  echohl None
 endfunction
 
 " ============================================================================
