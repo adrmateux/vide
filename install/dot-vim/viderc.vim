@@ -251,13 +251,20 @@ function! ExecuteMarkdownSnippet() range
   let l:lines = getline(a:firstline, a:lastline)
   
   " Check if first line contains language specification
-  if l:lines[0] !~ '^```\w\+'
+  if l:lines[0] !~ '^```\s*\(\w\+\|"[^"]\+"\|''[^'']\+''\)'
     echo "Error: Selection must start with ```<language>"
     return
   endif
   
-  " Extract language from first line
-  let l:lang = substitute(l:lines[0], '^```\(\w\+\).*', '\1', '')
+  " Extract language/command from first line
+  let l:lang_token = matchstr(l:lines[0], '^```\s*\zs\(\w\+\|"[^"]\+"\|''[^'']\+''\)\ze')
+  let l:lang = l:lang_token
+  let l:is_quoted_lang = 0
+
+  if l:lang_token =~ '^".*"$' || l:lang_token =~ "^'.*'$"
+    let l:lang = l:lang_token[1:-2]
+    let l:is_quoted_lang = 1
+  endif
   
   " Remove first line (```) and last line (```) if present
   let l:code_lines = l:lines[1:]
@@ -267,7 +274,9 @@ function! ExecuteMarkdownSnippet() range
   
   " Determine command based on language
   let l:cmd = ''
-  if l:lang ==# 'python' || l:lang ==# 'python3' || l:lang ==# 'py'
+  if l:is_quoted_lang
+    let l:cmd = l:lang
+  elseif l:lang ==# 'python' || l:lang ==# 'python3' || l:lang ==# 'py'
     let l:cmd = 'python3'
   elseif l:lang ==# 'bash' || l:lang ==# 'sh' || l:lang ==# 'shell'
     let l:cmd = 'bash'
