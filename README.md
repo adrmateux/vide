@@ -14,7 +14,7 @@ In Debian/Ubuntu:
 
 ```shell
 sudo apt install vim vim-gui-common vim-doc vim-scripts
-``
+```
 
 ### Optional
 
