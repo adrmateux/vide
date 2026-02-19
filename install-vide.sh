@@ -13,18 +13,23 @@ echo SCRIPT_DIR=$SCRIPT_DIR
 ln -sf $SCRIPT_DIR/install/dot-vim $HOME/.vim
 ln -sf $SCRIPT_DIR/install/dot-vimrc $HOME/.vimrc
 
+[ -d $HOME/bin ] || mkdir $HOME/bin/
 # Create symbolic links to scripts that shall be available on the path
 ln -sf  $SCRIPT_DIR/install/scripts/* $HOME/bin/
 
 # Find out in what shell it is running and install 
-# If we detect that there is a dassh_tools_dir, we install there
 for WS in ".zshrc" ".bashrc"
 do
 if [ -e "$HOME/$WS" ]; then
   echo "Installing for $WS"
   grep "source ~/.vim/vide-shell-functions.sh" "$HOME/$WS" || printf "source ~/.vim/vide-shell-functions.sh\n" >> "$HOME/$WS"
   grep VI_SERVER "$HOME/$WS" || printf "export VI_SERVER=\"vide\"\n" >> "$HOME/$WS"
-else
-  echo "ERROR: Don't know where to install vide main functions."
+  INSTALLED=1
 fi
 done
+
+if [ -z "$INSTALLED" ]; then
+  echo "ERROR: Don't know where to install vide main functions."
+fi
+
+git submodule init
