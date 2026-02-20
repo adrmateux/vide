@@ -91,7 +91,7 @@ function! s:Load_Llama_plugin()
   call s:Start_llama_server()
   
   " Configure and load plugin
-  let g:llama_config = { 'show_info': 0 }
+  " let g:llama_config = { 'show_info': 0 }
   packadd llama.vim
   
   let g:llama_loaded = 1
