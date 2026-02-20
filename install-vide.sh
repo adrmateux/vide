@@ -33,3 +33,4 @@ if [ -z "$INSTALLED" ]; then
 fi
 
 git submodule init
+git submodule update
