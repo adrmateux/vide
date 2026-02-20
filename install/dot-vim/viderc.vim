@@ -76,7 +76,7 @@ function! s:Setup_core_editor_settings()
   let g:netrw_alto = 0 
 
   "TODO:ROLL BACK ALL USAGE OF ZSH: not safe, not posix, added value can be developed in bash
-  set shell=/bin/zsh
+  set shell=/bin/bash
 
   " Highlight search
   " set hlsearch

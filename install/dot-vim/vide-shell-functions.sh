@@ -23,7 +23,7 @@ vs(){
         printf "\n\nWARNING: No tags or cscope.files found!\n\n"
       fi
     fi
-    if command -v screen && [ -z "$NO_SCREEN" ]; then
+    if command -v screen && [ -n "$USE_GNU_SCREEN" ]; then
        LAUNCH_WITH_SCREEN="screen"
        SCREEN_ARG_1="-S"
        SCREEN_ARG_2=$VI_SERVER
