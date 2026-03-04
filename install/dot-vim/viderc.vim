@@ -530,11 +530,39 @@ endfunction
 " File Browser (Netrw)
 " ============================================================================
 function! Netrw_client()
+  augroup vide_netrw_server_mode
+    autocmd!
+  augroup END
+
   let g:netrw_list_hide = '.*\.d$,.*\.o$,.*\.swp$'
   let g:netrw_hide = 1
   let g:netrw_browse_split = 3
-  nmap kk :0tabnew<CR>
-  nmap ko :bd<CR>
+  nnoremap <silent> kk :0tabnew<CR>
+  nnoremap <silent> ko :bd<CR>
+endfunction
+
+
+function! s:Send_to_vim_server(vim_command)
+  if empty($VI_SERVER)
+    echohl ErrorMsg
+    echo 'VI_SERVER is empty. Unable to send command to server.'
+    echohl None
+    return
+  endif
+
+  if exists('*remote_send')
+    call remote_send($VI_SERVER, "\<C-\\>\<C-N>:" . a:vim_command . "\<CR>")
+    return
+  endif
+
+  let l:remote_send = "\<C-\\>\<C-N>:" . a:vim_command . "\<CR>"
+  execute 'silent! !vim --servername ' . shellescape($VI_SERVER) . ' --remote-send ' . shellescape(l:remote_send)
+endfunction
+
+
+function! s:Apply_netrw_server_maps()
+  nnoremap <silent> kk :call <SID>Send_to_vim_server('0tabnew')<CR><C-l>:redraw!<CR>
+  nnoremap <silent> ko :call <SID>Send_to_vim_server('bd')<CR><C-l>:redraw!<CR>
 endfunction
 
 
@@ -549,8 +577,12 @@ function! Netrw_server()
   
   " Execute command on file
   map <C-f> mf mx
-  nmap kk :silent! !vsx :0tabnew<CR><C-l>:redraw!<CR>
-  nmap ko :silent! !vsx :bd<CR><C-l>:redraw!<CR>
+  call s:Apply_netrw_server_maps()
+
+  augroup vide_netrw_server_mode
+    autocmd!
+    autocmd BufEnter * call <SID>Apply_netrw_server_maps()
+  augroup END
 endfunction
 
 " ============================================================================
