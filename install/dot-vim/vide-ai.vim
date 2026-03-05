@@ -124,7 +124,7 @@ function! s:Start_llama_server()
   if empty(l:check)
     " No server running, prompt for model selection
     let l:model_choice = confirm('Select Llama model:', 
-          \ "&Qwen2.5-Coder-0.5B (Q8_0)\nQ&wen2.5-Coder-3B (default)\n&Custom command", 
+          \ "&Qwen2.5-Coder-0.5B\nQ&wen2.5-Coder-3B (default)\n&Custom command", 
           \ 1)
     
     if l:model_choice == 0
@@ -132,20 +132,23 @@ function! s:Start_llama_server()
       return
     elseif l:model_choice == 1
       " Qwen2.5-Coder-0.5B
-      call system('screen -dmS llama-server llama-server --hf-repo ggml-org/Qwen2.5-Coder-0.5B-Q8_0-GGUF --hf-file qwen2.5-coder-0.5b-q8_0.gguf -c 2048 --port 8012')
+      call system('screen -dmS llamaServer llama-server --hf-repo ggml-org/Qwen2.5-Coder-0.5B-Q8_0-GGUF --hf-file qwen2.5-coder-0.5b-q8_0.gguf -c 2048 --port 8012')
       echom "llama-server started with Qwen2.5-Coder-0.5B."
     elseif l:model_choice == 2
       " Qwen2.5-Coder-3B default
-      call system('screen -dmS llama-server llama-server --fim-qwen-3b-default')
+      call system('screen -dmS llamaServer llama-server --fim-qwen-3b-default -c 2048 --port 8012')
       echom "llama-server started with Qwen2.5-Coder-3B."
     elseif l:model_choice == 3
       " Custom command
-      let l:custom_cmd = input('Enter llama-server command (without nohup/redirect): ', 'llama-server ')
+      let l:custom_cmd = input('Enter llama-server command: llama-server ', '--port 8012 -c 2048 --fim-qwen-1.5b-default')
       if empty(l:custom_cmd)
         echom "llama-server startup cancelled."
         return
       endif
-      call system('screen -dmS llama-server ' . l:custom_cmd)
+      let l:custom_cmd = "llama-server " . l:custom_cmd
+      echom " "
+      echom "Executing: " .  l:custom_cmd
+      call system('screen -dmS llamaServer ' . l:custom_cmd)
       echom "llama-server started with custom command."
     endif
   else

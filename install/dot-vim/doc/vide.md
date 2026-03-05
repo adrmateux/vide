@@ -316,6 +316,25 @@ Return to Terminal Input Mode:
 
 Press i to go back to terminal input mode.
 
+### Adding trailing characters
+To add trailling characters:
+
+```vim
+:set virtualedit=block
+```
+
+Then, enter block insert <C-v>, select text, press "A" (append), and type the desired chars to fill-in and finaly <Esc><Esc>.
+
+### Adding trailing block
+To copy a block in front of another block the first thing to do is:
+
+```vim
+:set virtualedit=block
+```
+
+Then add trailing chars to the block to be copyi and yank it. 
+Next enter visual block mode <C-v>, select where in the other block you want to copy, press "P" to copy the block before the previous one.
+
 ### END OF WORKFLOW SECTION
 
 ## EXTRA STUFF
