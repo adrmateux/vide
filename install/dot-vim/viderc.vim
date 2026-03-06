@@ -563,6 +563,9 @@ endfunction
 function! s:Apply_netrw_server_maps()
   nnoremap <silent> kk :call <SID>Send_to_vim_server('0tabnew')<CR><C-l>:redraw!<CR>
   nnoremap <silent> ko :call <SID>Send_to_vim_server('bd')<CR><C-l>:redraw!<CR>
+  nnoremap <silent> ks :call <SID>Send_to_vim_server('split')<CR><C-l>:redraw!<CR>
+  nnoremap <silent> kv :call <SID>Send_to_vim_server('vsplit')<CR><C-l>:redraw!<CR>
+  nnoremap <silent> kq :call <SID>Send_to_vim_server('q')<CR><C-l>:redraw!<CR>
 endfunction
 
 
