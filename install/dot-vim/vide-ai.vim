@@ -157,13 +157,13 @@ function! s:Start_llama_server()
   endif
 
   " Launch embeddings server
-  let l:embeddings_cmd = "llama-server -hf Snowflake/snowflake-arctic-embed-m-v1.5:Q8_0 --embeddings --host 127.0.0.1 --port 8013 -c 2048 -ngl 99"
+  let l:embeddings_cmd = "llama-server -hf Snowflake/snowflake-arctic-embed-m-v1.5:Q8_0 --embeddings --host 127.0.0.1 --port 8013 -c 2048 -ngl auto"
   echom "Executing: " .  l:embeddings_cmd
   call system('screen -dmS llamaServerEmbeddings ' . l:embeddings_cmd)
   echom "Started Embeddings llama-server."
  
   " Launch instructions server
-  let l:instruct_cmd = "llama-server -hf Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0 --host 127.0.0.1 --port 8014 -c 8192 -ngl 99 --cont-batching"
+  let l:instruct_cmd = "llama-server -hf Qwen/Qwen2.5-Coder-7B-Instruct-GGUF:Q5_K_M --host 127.0.0.1 --port 8014 -c 8192 -ngl auto --cont-batching"
   echom "Executing: " .  l:instruct_cmd
   call system('screen -dmS llamaServerInstruct ' . l:instruct_cmd)
   echom "Started Instruct llama-server."
