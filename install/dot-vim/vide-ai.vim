@@ -93,7 +93,7 @@ function! s:Load_Llama_plugin()
   " Configure and load plugin
   " let g:llama_config = { 'show_info': 0 }
   packadd llama.vim
-  
+  source ~/.vim/vide-llama-config.vim 
   let g:llama_loaded = 1
 endfunction
 
@@ -140,7 +140,7 @@ function! s:Start_llama_server()
       echom "llama-server started with Qwen2.5-Coder-3B."
     elseif l:model_choice == 3
       " Custom command
-      let l:custom_cmd = input('Enter llama-server command: llama-server ', '--port 8012 -c 2048 --fim-qwen-1.5b-default')
+      let l:custom_cmd = input('Enter llama-server command: llama-server ', '--port 8012 -c 8192 --fim-qwen-1.5b-default')
       if empty(l:custom_cmd)
         echom "llama-server startup cancelled."
         return
@@ -153,7 +153,21 @@ function! s:Start_llama_server()
     endif
   else
     echom "llama-server is already running."
+    return
   endif
+
+  " Launch embeddings server
+  let l:embeddings_cmd = "llama-server -hf Snowflake/snowflake-arctic-embed-m-v1.5:Q8_0 --embeddings --host 127.0.0.1 --port 8013 -c 2048 -ngl 99"
+  echom "Executing: " .  l:embeddings_cmd
+  call system('screen -dmS llamaServerEmbeddings ' . l:embeddings_cmd)
+  echom "Started Embeddings llama-server."
+ 
+  " Launch instructions server
+  let l:instruct_cmd = "llama-server -hf Qwen/Qwen2.5-7B-Instruct-GGUF:Q8_0 --host 127.0.0.1 --port 8014 -c 8192 -ngl 99 --cont-batching"
+  echom "Executing: " .  l:instruct_cmd
+  call system('screen -dmS llamaServerInstruct ' . l:instruct_cmd)
+  echom "Started Instruct llama-server."
+
 endfunction
 
 function! s:Get_buffer_AI_type(bufnr)
