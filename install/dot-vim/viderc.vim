@@ -562,10 +562,24 @@ endfunction
 
 function! s:Apply_netrw_server_maps()
   nnoremap <silent> kk :call <SID>Send_to_vim_server('0tabnew')<CR><C-l>:redraw!<CR>
+  " kill buffer 
   nnoremap <silent> ko :call <SID>Send_to_vim_server('bd')<CR><C-l>:redraw!<CR>
   nnoremap <silent> ks :call <SID>Send_to_vim_server('split')<CR><C-l>:redraw!<CR>
   nnoremap <silent> kv :call <SID>Send_to_vim_server('vsplit')<CR><C-l>:redraw!<CR>
+  " Close window
   nnoremap <silent> kq :call <SID>Send_to_vim_server('q')<CR><C-l>:redraw!<CR>
+  " Rotate clockwise
+  nnoremap <silent> kr :call <SID>Send_to_vim_server('wincmd r')<CR><C-l>:redraw!<CR>
+  " Swap current window with next
+  nnoremap <silent> kx :call <SID>Send_to_vim_server('wincmd x')<CR><C-l>:redraw!<CR>
+  " Move window to far top
+  nnoremap <silent> kK :call <SID>Send_to_vim_server('wincmd K')<CR><C-l>:redraw!<CR>
+  " Move window to far bottom
+  nnoremap <silent> kJ :call <SID>Send_to_vim_server('wincmd J')<CR><C-l>:redraw!<CR>
+  " Move window to far left
+  nnoremap <silent> kH :call <SID>Send_to_vim_server('wincmd H')<CR><C-l>:redraw!<CR>
+  " Move window to far right
+  nnoremap <silent> kL :call <SID>Send_to_vim_server('wincmd L')<CR><C-l>:redraw!<CR>
 endfunction
 
 
