@@ -580,6 +580,10 @@ function! s:Apply_netrw_server_maps()
   nnoremap <silent> kH :call <SID>Send_to_vim_server('wincmd H')<CR><C-l>:redraw!<CR>
   " Move window to far right
   nnoremap <silent> kL :call <SID>Send_to_vim_server('wincmd L')<CR><C-l>:redraw!<CR>
+  " Go window on the far right
+  nnoremap <silent> kl :call <SID>Send_to_vim_server('wincmd l')<CR><C-l>:redraw!<CR>
+  " Go to window on the far left
+  nnoremap <silent> kh :call <SID>Send_to_vim_server('wincmd h')<CR><C-l>:redraw!<CR>
 endfunction
 
 
