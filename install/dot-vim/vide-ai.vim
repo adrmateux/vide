@@ -126,18 +126,19 @@ function! s:Start_llama_server()
     let l:model_choice = confirm('Select Llama model:', 
           \ "&Qwen2.5-Coder-0.5B\nQ&wen2.5-Coder-3B (default)\n&Custom command", 
           \ 1)
-    
     if l:model_choice == 0
       echom "llama-server startup cancelled."
       return
     elseif l:model_choice == 1
       " Qwen2.5-Coder-0.5B
-      call system('screen -dmS llamaServer llama-server --hf-repo ggml-org/Qwen2.5-Coder-0.5B-Q8_0-GGUF --hf-file qwen2.5-coder-0.5b-q8_0.gguf -c 2048 --port 8012')
+      let l:output = system('screen -dmS llamaServer llama-server --hf-repo ggml-org/Qwen2.5-Coder-0.5B-Q8_0-GGUF --hf-file qwen2.5-coder-0.5b-q8_0.gguf -c 2048 --port 8012')
       echom "llama-server started with Qwen2.5-Coder-0.5B."
+      echom "output:" . l:output
     elseif l:model_choice == 2
       " Qwen2.5-Coder-3B default
-      call system('screen -dmS llamaServer llama-server --fim-qwen-3b-default -c 2048 --port 8012')
+      let l:output = system('screen -dmS llamaServer llama-server --fim-qwen-3b-default -c 2048 --port 8012')
       echom "llama-server started with Qwen2.5-Coder-3B."
+      echom "output:" . l:output
     elseif l:model_choice == 3
       " Custom command
       let l:custom_cmd = input('Enter llama-server command: llama-server ', '--port 8012 -c 8192 --fim-qwen-1.5b-default')
@@ -148,8 +149,9 @@ function! s:Start_llama_server()
       let l:custom_cmd = "llama-server " . l:custom_cmd
       echom " "
       echom "Executing: " .  l:custom_cmd
-      call system('screen -dmS llamaServer ' . l:custom_cmd)
+      let l:output = system('screen -dmS llamaServer ' . l:custom_cmd)
       echom "llama-server started with custom command."
+      echom "output:" . l:output
     endif
   else
     echom "llama-server is already running."
@@ -159,15 +161,16 @@ function! s:Start_llama_server()
   " Launch embeddings server
   let l:embeddings_cmd = "llama-server -hf Snowflake/snowflake-arctic-embed-m-v1.5:Q8_0 --embeddings --host 127.0.0.1 --port 8013 -c 2048 -ngl auto"
   echom "Executing: " .  l:embeddings_cmd
-  call system('screen -dmS llamaServerEmbeddings ' . l:embeddings_cmd)
+  let l:output = system('screen -dmS llamaServerEmbeddings ' . l:embeddings_cmd)
   echom "Started Embeddings llama-server."
+  echom "output:" . l:output
  
   " Launch instructions server
   let l:instruct_cmd = "llama-server -hf Qwen/Qwen2.5-Coder-7B-Instruct-GGUF:Q5_K_M --host 127.0.0.1 --port 8014 -c 8192 -ngl auto --cont-batching"
   echom "Executing: " .  l:instruct_cmd
-  call system('screen -dmS llamaServerInstruct ' . l:instruct_cmd)
+  let l:output =  system('screen -dmS llamaServerInstruct ' . l:instruct_cmd)
   echom "Started Instruct llama-server."
-
+  echom "output:" . l:output
 endfunction
 
 function! s:Get_buffer_AI_type(bufnr)
