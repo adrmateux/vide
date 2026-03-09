@@ -127,7 +127,7 @@ endfunction
 " AI Helper Functions
 " ============================================================================
 function! s:Start_llama_server()
-  let l:check = system('pgrep -x llama-server | grep 8012')
+  let l:check = system('pgrep -a llama-server | grep 8012')
   if empty(l:check)
     " No server running, prompt for model selection
     let l:model_choice = confirm('Select Llama model:', 
@@ -161,7 +161,7 @@ function! s:Start_llama_server()
   endif
 
   " Launch embeddings server
-  let l:check = system('pgrep -x llama-server | grep 8013')
+  let l:check = system('pgrep -a llama-server | grep 8013')
   if empty(l:check)
     echom "Starting Embeddings llama-server."
     let l:embeddings_cmd = "llama-server -hf Snowflake/snowflake-arctic-embed-m-v1.5:Q8_0 --embeddings --host 127.0.0.1 --port 8013 -c 2048 -ngl auto"
@@ -172,14 +172,13 @@ function! s:Start_llama_server()
   endif
   
   " Launch instructions server
-  let l:check = system('pgrep -x llama-server | grep 8014')
+  let l:check = system('pgrep -a llama-server | grep 8014')
   if empty(l:check)
     echom "Starting Instruct llama-server."
     let l:instruct_cmd = "llama-server -hf Qwen/Qwen2.5-Coder-7B-Instruct-GGUF:Q5_K_M --host 127.0.0.1 --port 8014 -c 8192 -ngl auto --cont-batching"
     echom "Executing: " .  l:instruct_cmd
     let l:output =  system('screen -dmS llamaServerInstruct ' . l:instruct_cmd)
     echom "output:" . l:output
-    sleep 500m   
   endif
 endfunction
 
