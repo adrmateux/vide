@@ -65,12 +65,18 @@ function! s:Load_Copilot_plugin()
     return
   endif
   
-  packadd copilot.vim
-  
   " Keybindings - Use C-j instead of Tab for acceptance
-  imap <silent><script><expr> <C-j> copilot#Accept("\<CR>")
+  " TODO: This is actually not working
+  " The keymap <Tab> is attributed. 
+  " If you want to remove, use :iunmap <Tab>
   let g:copilot_no_tab_map = v:true
+ 
+  packadd copilot.vim
+  imap <lent><script><expr> <C-j> copilot#Accept("\<CR>")
   
+  " To not let the <Tab> be slowdown, using:
+  set timeoutlen=100 
+ 
   " Navigation and control mappings
   imap <C-i>n <Plug>(copilot-next)
   imap <C-i>p <Plug>(copilot-previous)

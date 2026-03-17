@@ -339,6 +339,18 @@ Next enter visual block mode <C-v>, select where in the other block you want to 
 
 ## EXTRA STUFF
 
+### Usefull software to work with
+
+#### Linux
+
+#### ghostwriter
+
+To open a markdown file with ghostwriter:
+
+```vim
+:!ghostwriter %
+```
+
 ### Using GNU Screen
 
 Vide launcher, by default, tries to use GNU Screen to launch Vide.
