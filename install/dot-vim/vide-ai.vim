@@ -74,8 +74,9 @@ function! s:Load_Copilot_plugin()
   packadd copilot.vim
   imap <lent><script><expr> <C-j> copilot#Accept("\<CR>")
   
-  " To not let the <Tab> be slowdown, using:
-  set timeoutlen=100 
+  " When using autocompletion/ai use timeoutlen=1000
+  " When editing and don't want the <Tab> slowed down, set it to 100 or less:
+  set timeoutlen=1000
  
   " Navigation and control mappings
   imap <C-i>n <Plug>(copilot-next)

@@ -1,5 +1,9 @@
 {
   "suggest.autoTrigger": "none",
-  "suggest.noselect": true
+  "suggest.noselect": true,
+  "workspace.rootPatterns": [".git", ".hg", "pyproject.toml", "package.json", ".vim", "."],
+  "pyright.inlayHints.variableTypes": false,
+  "pyright.inlayHints.functionReturnTypes": false,
+  "pyright.inlayHints.parameterTypes": false
 }
 
