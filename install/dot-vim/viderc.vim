@@ -561,7 +561,7 @@ endfunction
 
 
 function! s:Apply_netrw_server_maps()
-  nnoremap <silent> kk :call <SID>Send_to_vim_server('0tabnew')<CR><C-l>:redraw!<CR>
+  nnoremap <silent> ki :call <SID>Send_to_vim_server('0tabnew')<CR><C-l>:redraw!<CR>
   " kill buffer 
   nnoremap <silent> ko :call <SID>Send_to_vim_server('bd')<CR><C-l>:redraw!<CR>
   nnoremap <silent> ks :call <SID>Send_to_vim_server('split')<CR><C-l>:redraw!<CR>
@@ -584,6 +584,10 @@ function! s:Apply_netrw_server_maps()
   nnoremap <silent> kl :call <SID>Send_to_vim_server('wincmd l')<CR><C-l>:redraw!<CR>
   " Go to window on the far left
   nnoremap <silent> kh :call <SID>Send_to_vim_server('wincmd h')<CR><C-l>:redraw!<CR>
+  " Go to window above
+  nnoremap <silent> kk :call <SID>Send_to_vim_server('wincmd k')<CR><C-l>:redraw!<CR>
+  " Go to window bellow
+  nnoremap <silent> kj :call <SID>Send_to_vim_server('wincmd j')<CR><C-l>:redraw!<CR>
 endfunction
 
 
