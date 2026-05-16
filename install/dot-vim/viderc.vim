@@ -561,10 +561,13 @@ endfunction
 
 
 function! s:Apply_netrw_server_maps()
+  " Create new tab
   nnoremap <silent> ki :call <SID>Send_to_vim_server('0tabnew')<CR><C-l>:redraw!<CR>
   " kill buffer 
   nnoremap <silent> ko :call <SID>Send_to_vim_server('bd')<CR><C-l>:redraw!<CR>
+  " split tab horizontally
   nnoremap <silent> ks :call <SID>Send_to_vim_server('split')<CR><C-l>:redraw!<CR>
+ " split tab vertically
   nnoremap <silent> kv :call <SID>Send_to_vim_server('vsplit')<CR><C-l>:redraw!<CR>
   " Close window
   nnoremap <silent> kq :call <SID>Send_to_vim_server('q')<CR><C-l>:redraw!<CR>
