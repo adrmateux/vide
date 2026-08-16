@@ -30,6 +30,8 @@ function! ShowShortcutsPopup()
         \ '║   <C-i>d        - Copilot dismiss suggestion                   ║',
         \ '║   <C-i>s        - Copilot suggest                              ║',
         \ '║   <C-i>w        - Copilot accept word                          ║',
+        \ '║   <C-m>r        - Ask local RAG about a KB folder               ║',
+        \ '║   :RagAsk       - Ask local RAG about a KB folder (command)    ║',
         \ '║                                                                ║',
         \ '║ CODE NAVIGATION                                                ║',
         \ '║   <C-\>         - Jump to tag in new tab                       ║',

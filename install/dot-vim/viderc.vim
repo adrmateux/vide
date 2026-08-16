@@ -6,6 +6,7 @@
 
 source ~/.vim/helpers.vim
 source ~/.vim/vide-ai.vim
+source ~/.vim/vide-rag.vim
 source ~/.vim/vide-help.vim
 source ~/.vim/vide-open-reference-helpers.vim
 
