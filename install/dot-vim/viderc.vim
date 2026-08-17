@@ -54,6 +54,9 @@ function! s:Setup_core_editor_settings()
   set dictionary+=/usr/share/dict/american-english
   set dictionary+=/usr/share/dict/spanish
 
+  " Enable syntax highlighting
+  syntax on
+
   " The best color scheme so far
   colorscheme slate
 
