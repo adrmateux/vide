@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <cctype>
 #include <unordered_set>
+#include <regex>
+#include <sstream>
 
 #include <sqlite3.h>
 
@@ -32,15 +34,30 @@ std::string read_text_file(const fs::path& p) {
     return std::string((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 }
 
+// Moves idx backward off a UTF-8 continuation byte (10xxxxxx) so chunk
+// boundaries never split a multi-byte character -- files with accented
+// text (French, etc.) would otherwise produce chunks ending mid-character.
+size_t snap_utf8_boundary(const std::string& s, size_t idx) {
+    if (idx >= s.size()) return idx;
+    while (idx > 0 && (static_cast<unsigned char>(s[idx]) & 0xC0) == 0x80) {
+        --idx;
+    }
+    return idx;
+}
+
 std::vector<std::string> chunk_text(const std::string& s, size_t chunk = 1000, size_t overlap = 200) {
     std::vector<std::string> out;
     if (s.empty()) return out;
     size_t start = 0;
     while (start < s.size()) {
         size_t end = std::min(start + chunk, s.size());
+        if (end < s.size()) {
+            size_t snapped = snap_utf8_boundary(s, end);
+            if (snapped > start) end = snapped;
+        }
         out.emplace_back(s.substr(start, end - start));
         if (end == s.size()) break;
-        start = end - std::min(overlap, end);
+        start = snap_utf8_boundary(s, end - std::min(overlap, end));
     }
     return out;
 }
@@ -133,7 +150,7 @@ std::optional<std::vector<float>> embed(const std::string& base_url, const std::
 
     for (int attempt = 0; attempt < 4; ++attempt) {
         json req_openai = { {"input", safe_text} };
-        auto res = cli.Post("/v1/embeddings", req_openai.dump(), "application/json");
+        auto res = cli.Post("/v1/embeddings", req_openai.dump(-1, ' ', false, json::error_handler_t::replace), "application/json");
         if (res && res->status == 200) {
             try {
                 json j = json::parse(res->body);
@@ -142,9 +159,10 @@ std::optional<std::vector<float>> embed(const std::string& base_url, const std::
                 std::cerr << "Unexpected /v1/embeddings JSON shape\n";
             }
         } else if (res) {
-            bool too_large = (res->status == 500 && res->body.find("input is too large") != std::string::npos);
+            bool too_large = (res->status == 500 && res->body.find("too large") != std::string::npos);
             if (too_large && safe_text.size() > 160) {
                 safe_text.resize(safe_text.size() / 2);
+                safe_text = to_valid_utf8(safe_text);
                 continue;
             }
             std::cerr << "/v1/embeddings failed status=" << res->status;
@@ -153,7 +171,7 @@ std::optional<std::vector<float>> embed(const std::string& base_url, const std::
         }
 
         json req_legacy = { {"content", safe_text} };
-        res = cli.Post("/embedding", req_legacy.dump(), "application/json");
+        res = cli.Post("/embedding", req_legacy.dump(-1, ' ', false, json::error_handler_t::replace), "application/json");
         if (!res || res->status != 200) {
             std::cerr << "Embedding HTTP error";
             if (res) std::cerr << " status=" << res->status;
@@ -257,6 +275,73 @@ float all_terms_match_bonus(const std::string& question, const std::string& text
     return 0.f;
 }
 
+struct EntityPattern {
+    std::regex re;
+    std::vector<std::string> keywords;
+};
+
+const std::vector<EntityPattern>& entity_patterns() {
+    static const std::vector<EntityPattern> patterns = {
+        { std::regex(R"(\b[0-9A-Fa-f]{2}([:-][0-9A-Fa-f]{2}){5}\b)"), {"mac"} },
+        { std::regex(R"(\b\d{1,3}(\.\d{1,3}){3}\b)"), {"ip", "ipv4", "ips"} },
+        { std::regex(R"(\b[\w.+-]+@[\w-]+\.[\w.-]+\b)"), {"email", "emails"} },
+        { std::regex(R"(\b[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}\b)"), {"uuid", "uuids"} },
+    };
+    return patterns;
+}
+
+// Counts entity matches per pattern, split into "paired" occurrences
+// (a match sharing its line with another word, e.g. "AA:BB:..:FF router1" --
+// looking like an identifier -> label record) versus bare occurrences
+// (e.g. a plain list of MAC addresses with nothing else on the line).
+void count_entity_occurrences(const std::regex& re, const std::string& text,
+                              size_t& total, size_t& paired) {
+    static const std::regex word_re(R"([A-Za-z][A-Za-z0-9_-]{2,})");
+    total = 0;
+    paired = 0;
+
+    std::istringstream lines(text);
+    std::string line;
+    while (std::getline(lines, line)) {
+        size_t line_matches = static_cast<size_t>(
+            std::distance(std::sregex_iterator(line.begin(), line.end(), re), std::sregex_iterator()));
+        if (line_matches == 0) continue;
+        total += line_matches;
+
+        std::string rest = std::regex_replace(line, re, " ");
+        if (std::sregex_iterator(rest.begin(), rest.end(), word_re) != std::sregex_iterator()) {
+            ++paired;
+        }
+    }
+}
+
+// Embedding models trained on natural-language sentence similarity tend to
+// underrate sparse key-value/tabular data relative to prose that merely
+// discusses the same subject. When the question names a recognizable
+// structured identifier (MAC/IP/email/UUID), reward chunks that actually
+// pair instances of it with a label (e.g. a MAC-to-device-name table),
+// weighted well above chunks that are merely a bare, unlabeled list.
+float entity_density_bonus(const std::string& question, const std::string& text) {
+    auto qtok = tokenize_words(question);
+    std::unordered_set<std::string> qset(qtok.begin(), qtok.end());
+
+    float bonus = 0.f;
+    for (const auto& pat : entity_patterns()) {
+        bool mentioned = false;
+        for (const auto& kw : pat.keywords) {
+            if (qset.find(kw) != qset.end()) { mentioned = true; break; }
+        }
+        if (!mentioned) continue;
+
+        size_t total = 0, paired = 0;
+        count_entity_occurrences(pat.re, text, total, paired);
+        float b = std::min(0.08f, 0.005f * static_cast<float>(total))
+                + std::min(0.30f, 0.06f * static_cast<float>(paired));
+        bonus = std::max(bonus, b);
+    }
+    return bonus;
+}
+
 bool parse_port(const std::string& s, int& out_port) {
     char* end = nullptr;
     long v = std::strtol(s.c_str(), &end, 10);
@@ -287,6 +372,9 @@ std::vector<fs::path> collect_doc_files(const std::string& folder) {
     static const std::unordered_set<std::string> ignored_dir_names = {
         ".git", ".svn", ".hg", "node_modules", "build", "dist", "target", "__pycache__", ".venv", "venv"
     };
+    static const std::unordered_set<std::string> allowed_extensions = {
+        ".md", ".sh", ".db", ".c", ".cpp", ".txt", ".py"
+    };
 
     std::vector<fs::path> files;
     for (auto it = fs::recursive_directory_iterator(folder); it != fs::recursive_directory_iterator(); ++it) {
@@ -307,7 +395,7 @@ std::vector<fs::path> collect_doc_files(const std::string& folder) {
 
         if (!p.is_regular_file()) continue;
         auto ext = p.path().extension().string();
-        if (ext != ".txt" && ext != ".md") continue;
+        if (allowed_extensions.find(ext) == allowed_extensions.end()) continue;
 
         std::uintmax_t sz = 0;
         try { sz = fs::file_size(p.path()); } catch (...) { continue; }
@@ -470,7 +558,8 @@ std::vector<RetrievedChunk> retrieve_with_vec(sqlite3* db,
         r.sem_score = 1.0f - dist;
         float s_lex = lexical_overlap_score(question, r.text);
         float s_bonus = all_terms_match_bonus(question, r.text);
-        r.score = 0.65f * r.sem_score + 0.35f * s_lex + s_bonus;
+        float s_entity = entity_density_bonus(question, r.text);
+        r.score = 0.65f * r.sem_score + 0.35f * s_lex + s_bonus + s_entity;
         rows.push_back(std::move(r));
     }
     sqlite3_finalize(st);
@@ -510,7 +599,8 @@ std::vector<RetrievedChunk> retrieve_fallback(sqlite3* db,
         r.sem_score = cosine(qvec, *ev);
         float s_lex = lexical_overlap_score(question, r.text);
         float s_bonus = all_terms_match_bonus(question, r.text);
-        r.score = 0.65f * r.sem_score + 0.35f * s_lex + s_bonus;
+        float s_entity = entity_density_bonus(question, r.text);
+        r.score = 0.65f * r.sem_score + 0.35f * s_lex + s_bonus + s_entity;
         rows.push_back(std::move(r));
     }
     sqlite3_finalize(st);
@@ -536,7 +626,7 @@ std::optional<std::string> chat(const std::string& base_url, const std::string& 
         {"max_tokens", 512}
     };
 
-    auto res = cli.Post("/v1/chat/completions", req.dump(), "application/json");
+    auto res = cli.Post("/v1/chat/completions", req.dump(-1, ' ', false, json::error_handler_t::replace), "application/json");
     if (!res || res->status != 200) {
         std::cerr << "Chat HTTP error\n";
         return std::nullopt;
@@ -766,6 +856,12 @@ int main(int argc, char** argv) {
         used_vec = false;
     }
 
+    if (std::getenv("RAG_DEBUG")) {
+        for (auto& h : hits) {
+            std::cerr << "[hit] score=" << h.score << " path=" << h.path << "\n";
+        }
+    }
+
     std::string context;
     context.reserve(max_context_chars + 256);
     for (auto& h : hits) {
@@ -774,10 +870,11 @@ int main(int argc, char** argv) {
         size_t remaining = max_context_chars - context.size();
         if (block.size() <= remaining) context += block;
         else {
-            context += block.substr(0, remaining);
+            context += block.substr(0, snap_utf8_boundary(block, remaining));
             break;
         }
     }
+    context = to_valid_utf8(context);
 
     std::string system = "You are a precise assistant. Answer ONLY using the provided CONTEXT. "
                          "If the answer is not present, say you don't know and cite file names.";
