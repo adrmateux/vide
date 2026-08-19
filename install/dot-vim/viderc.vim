@@ -57,9 +57,6 @@ function! s:Setup_core_editor_settings()
   " Enable syntax highlighting
   syntax on
 
-  " The best color scheme so far
-  colorscheme slate
-
   " Searchj options
   set ignorecase
   set smartcase
@@ -87,11 +84,10 @@ function! s:Setup_core_editor_settings()
 
   "set nocompatible
   " set termguicolors
-  " colorscheme peachpuff
   " show existing tab with 2 spaces width
-  set tabstop=4
+  set tabstop=2
   " when indenting with '>', use 2 spaces width
-  set shiftwidth=4
+  set shiftwidth=2
   " On pressing tab, insert 2 spaces
   set expandtab
   " set number
@@ -120,7 +116,13 @@ function! s:Setup_core_editor_settings()
   " Display settings
   set number
   set mouse=a
+  
+  " Tested colorschemas
+  " The best color schemes so far
+  " colorscheme slate
+  " colorscheme peachpuff
   colorscheme desert
+
   set nowrap
   
   " Swap file location
