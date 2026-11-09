@@ -1,5 +1,11 @@
 # Building vim 9.2 from the scratch
 
+## Pre-requisites 
+### Ubuntu 26
+sudo apt install libselinux1-dev liblua5.4-dev libgtk-3-dev
+
+## Configure
+
 ```shell
 cd src
 ./configure \
@@ -17,7 +23,7 @@ cd src
     --enable-python3interp=yes \
     --enable-rubyinterp=yes \
     --enable-tclinterp=yes
-make
+make -j$(nproc)
 sudo make install
 ```
 

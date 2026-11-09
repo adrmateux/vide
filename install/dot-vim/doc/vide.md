@@ -1,7 +1,4 @@
-# vide 0.1.1
-## vscli - command line vs helpers to use when vs and vss are already open.
-vs/vs1   <filename> - Opens new $VI_SERVER and a filename from the cli, if no filename is chosen, opens vide.md (this) file.
-vso/vso1 <filename> - Open file from the command line on the open $VI_SERVER
+#
 vsx/vsx1 <command>  - Execute command on vim server from the cli (Wdb, bd, tabnew, ... )
 vss/vss1            - vs file explorer
 vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi commands. To quit it press "q" followed by enter.
@@ -25,6 +22,31 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 |i| <C-n>             | autocomplete ins. mode   |i| <C-x><C-f>        | Autocomplete filename    |
 |n| *                 | search word after cursor |n| #                 | back search after cursos |
 |n| <C-r><C-w>        | Copy/paste word in :ex   | |                   |                          |
+
+
+## AI
+### Llama.cpp
+For more information, consult ':help llama'
+#### TODO - Dev
+* Restart llama servers (kill all stucked llama instances and launch them again)
+* Implement Agentic AI
+
+#### Work flow
+#### FIM - Fill In the Middle
+FIM is activated when user enables AI for the currect buffer using ':AIEnable'. From then on, FIM is activated.
+
+#### Instructions
+In normal mode select the text to be used for the instructions and press '<leader>lli'. 
+*Note*: '<leader>' in vim is set by default to '\' in case 'g:mapleader' is not defined.
+
+#### RAG
+
+#### Agentic
+TBC
+
+### Troubleshooting
+#### No autocompletion with llama
+After enabling (AIEnable) the buffer to use Llama.cpp, if there is no auto-completion, the most likely cause is that llama servers are dead. Kill all llama instances and restart it. 
 
 ## Auto-complete
 ### Native - ins-completion
