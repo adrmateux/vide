@@ -6,6 +6,7 @@ vsp/vsp1 [<filename>] - Open <filename> in $VI_SERVER and let the user type vi c
 ## Top 100  shortcuts/command
 |M| Com./Shor.        | Description              |M| Com./Shor.        | Description              |
 |-|-------------------|--------------------------|-|-------------------|--------------------------|
+|n| \<C-F1\>          | vide shortcuts           |n|                   |                          |
 |n| :Wbd              | write and close buff     |n| :h digraph        | show special char's list |
 |n| :.w !!            | execute line in shell    |n| :.w !bash         | execute line in shell    |
 |n| :g/text:          | create filtered view     |n| :verb map         | debug key equence        |
